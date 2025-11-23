@@ -1,0 +1,48 @@
+stages:
+  - build
+  - publish
+
+variables:
+  YARN_CACHE_FOLDER: .yarn-cache
+
+build_sdk:
+  image: node:20-alpine
+  stage: build
+  rules:
+    - if: "$CI_COMMIT_TAG"
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .yarn-cache/
+      - node_modules/
+  before_script:
+    - corepack enable
+  script:
+    - yarn install
+    - yarn build
+  artifacts:
+    name: "heimdall-sdk-${CI_COMMIT_TAG}"
+    paths:
+      - dist/
+    expire_in: 1 week
+
+publish_sdk:
+  image: node:20-alpine
+  stage: publish
+  rules:
+    - if: "$CI_COMMIT_TAG"
+  before_script:
+    - corepack enable
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}" > .npmrc
+    - echo "@rnzeus:registry=https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/" >> .npmrc
+    - echo "always-auth=true" >> .npmrc
+  script:
+    - yarn install
+    - yarn build
+    - npm publish --registry "https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/"
+  needs: []
+  dependencies: []
+  artifacts:
+    when: on_failure
+    paths:
+      - .npmrc
