@@ -79,6 +79,16 @@ export function loadLastConnection(): LastConnection | null {
   }
 }
 
+export function clearLastConnection() {
+  try {
+    storage.delete(KEY_LAST_HOST);
+    storage.delete(KEY_LAST_PORT);
+    storage.delete(KEY_LAST_CHANNEL);
+  } catch {
+    // ignore
+  }
+}
+
 export function clearClientId() {
   try {
     storage.delete(KEY_CLIENT_ID);

@@ -1,4 +1,4 @@
-import { patchFetch, restoreFetch } from "./patchFetch";
+import { patchFetch, restoreFetch } from "./patch-fetch";
 import { setPromptDefaults } from "./prompt-state";
 import {
   connectSocket,
@@ -7,7 +7,11 @@ import {
   enableCaptureEarlyEvents,
 } from "./socket";
 import type { HeimdallConnectOptions } from "./types";
-import { createSession, loadLastConnection } from "./session";
+import {
+  clearLastConnection,
+  createSession,
+  loadLastConnection,
+} from "./session";
 import type { HeimdallSession } from "./session";
 
 let currentSession: HeimdallSession | null = null;
@@ -94,6 +98,7 @@ export function disconnect() {
   restoreFetch();
   disconnectSocket();
   connected = false;
+  clearLastConnection();
 }
 
 export function destroy() {
@@ -102,6 +107,7 @@ export function destroy() {
   connected = false;
   currentSession = null;
   sdkEnabled = false;
+  clearLastConnection();
 }
 
 export function isConnected(): boolean {
