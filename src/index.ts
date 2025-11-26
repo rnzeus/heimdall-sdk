@@ -1,7 +1,7 @@
 export {
   connect,
   disconnect,
-  destroy,
+  // destroy, // NOTE: not needed for now
   configureConnectPrompt,
 } from "./connection";
 export { generateChannelId } from "./channel";
