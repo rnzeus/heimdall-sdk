@@ -1,7 +1,6 @@
+import { isSdkEnabled, sendEvent } from "@core/connection";
 import type { StateCreator } from "zustand";
-import { sendNetworkEvent } from "@core/zustand/socket";
-import type { ZustandEventPayload } from "@core/zustand/protocol";
-import { isSdkEnabled } from "@core/zustand/connection";
+import type { ZustandEventPayload } from "./types";
 
 /**
  * Middleware-style wrapper, like devtools/immer:
@@ -68,7 +67,7 @@ export function attachZustandStore<TState>(
 
       prevState = nextState;
 
-      sendNetworkEvent(payload);
+      sendEvent(payload);
     });
 
     (api as any).__HEIMDALL_ZUSTAND_UNSUB__ = unsubscribe;
@@ -82,7 +81,7 @@ export function attachZustandStore<TState>(
         state: prevState,
       };
 
-      sendNetworkEvent(initialPayload);
+      sendEvent(initialPayload);
     }
 
     // return the already "wrapped" state

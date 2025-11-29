@@ -1,2 +1,2 @@
-// auto-generated barrel
 export * from "./attachStore";
+export * from "./types";
