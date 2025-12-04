@@ -1,31 +1,40 @@
-import { isSdkEnabled, sendEvent } from "@core/connection";
-import type { StateCreator } from "zustand";
-import type { ZustandEventPayload } from "./types";
+import type { StateCreator, StoreMutatorIdentifier } from "zustand";
+import { sendEvent, isSdkEnabled } from "@core/connection";
+import { ZustandEventPayload } from "@core/zustand";
 
 /**
- * Middleware-style wrapper, like devtools/immer:
+ * Heimdall middleware for Zustand.
+ *
+ * Usage:
  *
  *   const useStore = create(
- *     attachZustandStore("connection", (set, get, api) => ({ ... }))
+ *     heimdallZustand("connection", (set, get, api) => ({
+ *       ...
+ *     }))
  *   );
+ *
+ * Features:
+ * - Does not store history / diff in SDK.
+ * - Sends snapshots of the state to Heimdall.
+ * - Tries to determine the "action" by the name of the top-level function of the store.
  */
-export function attachZustandStore<TState>(
+export function heimdallZustand<
+  TState,
+  Mis extends [StoreMutatorIdentifier, unknown][] = [],
+  Mos extends [StoreMutatorIdentifier, unknown][] = []
+>(
   storeName: string,
-  createState: StateCreator<TState, [], []>
-): StateCreator<TState, [], []> {
-  // actionName lives in the closure for this store
+  createState: StateCreator<TState, Mis, Mos>
+): StateCreator<TState, Mis, Mos> {
   let currentActionName: string | undefined;
 
-  return (set, get, api) => {
-    // if the SDK is disabled — simply create the store without any tracing
+  const wrappedCreator: StateCreator<TState, Mis, Mos> = (set, get, api) => {
     if (!isSdkEnabled()) {
       return createState(set, get, api);
     }
 
-    // create the store as usual
     const initialState = createState(set, get, api);
 
-    // wrap all top-level functions to catch the "action" name
     const wrappedState: any = { ...initialState };
 
     for (const key of Object.keys(wrappedState)) {
@@ -38,23 +47,20 @@ export function attachZustandStore<TState>(
           try {
             return original(...args);
           } finally {
-            // restore the previous action (in case of nested calls)
             currentActionName = prev;
           }
         };
       }
     }
 
-    // the first prevState is the initialState (already wrapped methods)
     let prevState = wrappedState as TState;
 
-    // subscribe to changes
     const unsubscribe = api.subscribe(() => {
-      if (!isSdkEnabled()) {
-        return;
-      }
+      if (!isSdkEnabled()) return;
 
       const nextState = api.getState() as TState;
+
+      if (nextState === prevState) return;
 
       const payload: ZustandEventPayload = {
         type: "zustand",
@@ -66,13 +72,11 @@ export function attachZustandStore<TState>(
       };
 
       prevState = nextState;
-
       sendEvent(payload);
     });
 
     (api as any).__HEIMDALL_ZUSTAND_UNSUB__ = unsubscribe;
 
-    // initial snapshot (one time, immediately after creating the store)
     if (isSdkEnabled()) {
       const initialPayload: ZustandEventPayload = {
         type: "zustand",
@@ -80,11 +84,11 @@ export function attachZustandStore<TState>(
         ts: Date.now(),
         state: prevState,
       };
-
       sendEvent(initialPayload);
     }
 
-    // return the already "wrapped" state
     return wrappedState as TState;
   };
+
+  return wrappedCreator;
 }
