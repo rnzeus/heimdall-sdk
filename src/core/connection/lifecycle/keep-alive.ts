@@ -1,6 +1,6 @@
 import { setPromptDefaults } from "../prompt";
 import { loadLastConnection } from "../session";
-import type { HeimdallConnectOptions } from "@types";
+import type { HeimdallConnectOptions } from "../../../types";
 import { setSdkEnabled, resolveEnabled } from "../sdk-enabled";
 import { setupEarlyEvents } from "./early-events";
 import { connect } from "./connect";

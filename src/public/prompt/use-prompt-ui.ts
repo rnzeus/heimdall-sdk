@@ -7,7 +7,7 @@ import {
   getPromptState,
   isConnected,
   subscribePrompt,
-} from "@core/connection";
+} from "../../core/connection";
 import { useEffect, useState } from "react";
 import { PromptUiState } from "./types";
 

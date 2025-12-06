@@ -1,4 +1,4 @@
-import { restoreFetch } from "@core/network";
+import { restoreFetch } from "../../network";
 import { disconnectSocket } from "../socket";
 
 export function disconnect() {

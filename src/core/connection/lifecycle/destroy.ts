@@ -1,4 +1,4 @@
-import { restoreFetch } from "@core/network";
+import { restoreFetch } from "../../network";
 import { destroySocket } from "../socket";
 import { setSdkEnabled } from "../sdk-enabled";
 

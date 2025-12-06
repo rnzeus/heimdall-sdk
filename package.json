@@ -7,7 +7,9 @@
   "private": false,
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "zustand.js",
+    "zustand.d.ts"
   ],
   "exports": {
     ".": {
@@ -16,7 +18,16 @@
     },
     "./zustand": {
       "types": "./dist/zustand/index.d.ts",
+      "react-native": "./dist/zustand/index.js",
+      "import": "./dist/zustand/index.js",
       "default": "./dist/zustand/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "zustand": [
+        "dist/zustand/index.d.ts"
+      ]
     }
   },
   "devDependencies": {
@@ -43,5 +54,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@rnzeus/heimdall-protocol": "file:../heimdall-protocol"
+  }
 }

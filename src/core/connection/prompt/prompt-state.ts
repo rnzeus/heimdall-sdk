@@ -1,4 +1,4 @@
-import type { HeimdallConnectOptions } from "@types";
+import type { HeimdallConnectOptions } from "../../../types";
 
 type PromptDefaults = Omit<HeimdallConnectOptions, "channel">;
 

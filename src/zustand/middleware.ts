@@ -1,6 +1,6 @@
-import type { StateCreator, StoreMutatorIdentifier } from "zustand";
-import { sendEvent, isSdkEnabled } from "@core/connection";
-import { ZustandEventPayload } from "@core/zustand";
+import type { StateCreator, StoreMutatorIdentifier } from "zustand/vanilla";
+import { sendEvent, isSdkEnabled } from "../core/connection";
+import type { ZustandEventPayload } from "@rnzeus/heimdall-protocol";
 
 /**
  * Heimdall middleware for Zustand.

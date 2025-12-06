@@ -1,4 +1,4 @@
-import type { HeimdallConnectOptions } from "@types";
+import type { HeimdallConnectOptions } from "../../../types";
 import type { HeimdallSession } from "./types";
 import { getOrCreateClientId, generateClientId } from "./client-id";
 import { SESSION_STORAGE, SESSION } from "./constants";

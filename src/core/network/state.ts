@@ -1,4 +1,4 @@
-import { NetworkFilters } from "./types";
+import type { NetworkFilters } from "@rnzeus/heimdall-protocol";
 
 let patched = false;
 let filters: NetworkFilters = {};

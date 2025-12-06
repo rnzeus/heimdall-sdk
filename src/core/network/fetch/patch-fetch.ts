@@ -1,11 +1,13 @@
 import { getFilters, isPatched, setFilters, setPatched } from "../state";
-import { NetworkFilters } from "../types";
 import { shouldSkip } from "../utils";
 import { getOriginalFetch, setOriginalFetch } from "./state";
 import { NETWORK } from "../constants";
-import { parseUrl } from "@utils";
-import type { NetworkEventPayload } from "../types";
-import { sendEvent } from "@core/connection";
+import { parseUrl } from "../../../utils";
+import { sendEvent } from "../../connection";
+import type {
+  NetworkEventPayload,
+  NetworkFilters,
+} from "@rnzeus/heimdall-protocol";
 
 export function patchFetch(options?: NetworkFilters) {
   if (!globalThis.fetch) return;

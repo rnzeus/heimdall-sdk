@@ -11,14 +11,7 @@
     "strict": true,
     "types": [],
     "noEmit": false,
-    "baseUrl": ".",
-    "paths": {
-      "@core/*": ["src/core/*"],
-      "@modules/*": ["src/modules/*"],
-      "@utils": ["src/utils/index.ts"],
-      "@types": ["src/types/index.ts"],
-      "@public/*": ["src/public/*"]
-    }
+    "baseUrl": "."
   },
   "include": ["src"]
 }

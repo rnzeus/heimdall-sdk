@@ -1,4 +1,4 @@
-import { NetworkFilters } from "../types";
+import type { NetworkFilters } from "@rnzeus/heimdall-protocol";
 
 function matchList(value: string, list?: (string | RegExp)[]): boolean {
   if (!list || list.length === 0) return false;

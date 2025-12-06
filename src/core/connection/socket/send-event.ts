@@ -1,7 +1,7 @@
 import { isConnected, getSocket } from "./state";
 import { getCaptureEarlyEvents, pushEarlyEvent } from "./early-buffer";
 import { EventWireMessageV1, EventWirePayload } from "../protocol";
-import { HeimdallPlatform } from "@types";
+import { HeimdallPlatform } from "../../../types";
 import { getCurrentSession } from "../session";
 
 export function sendEvent(payload: EventWirePayload) {

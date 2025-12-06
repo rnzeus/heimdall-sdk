@@ -1,4 +1,4 @@
-import { patchFetch } from "@core/network";
+import { patchFetch } from "../../network";
 import { enableCaptureEarlyEvents } from "../socket";
 
 /**

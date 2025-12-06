@@ -1,5 +1,5 @@
 import TcpSocket from "react-native-tcp-socket";
-import type { HeimdallConnectOptions, HeimdallPlatform } from "@types";
+import type { HeimdallConnectOptions, HeimdallPlatform } from "../../../types";
 import {
   isConnected,
   getSocket,

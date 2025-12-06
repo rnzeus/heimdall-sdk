@@ -1,7 +1,7 @@
-import { patchFetch } from "@core/network";
+import { patchFetch } from "../../network";
 import { resolveEnabled, setSdkEnabled } from "../sdk-enabled";
 import { createSession, setCurrentSession } from "../session";
-import type { HeimdallConnectOptions } from "@types";
+import type { HeimdallConnectOptions } from "../../../types";
 import { connectSocket } from "../socket";
 
 export function connect(options: HeimdallConnectOptions) {

@@ -7,8 +7,8 @@ import {
   hidePrompt,
   isChannel,
   sanitizeChannelSlug,
-} from "@core/connection";
-import { generateChannelId } from "@core/connection";
+} from "../../core/connection";
+import { generateChannelId } from "../../core/connection";
 
 const usePrompt = (props: UsePromptProps) => {
   const onCancel = () => {
