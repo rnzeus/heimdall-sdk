@@ -24,10 +24,8 @@ const usePromptUi = () => {
     const defaultPort = String(initialPrompt.defaults?.port ?? 35678);
     const defaultChannel = generateChannelId("session");
 
-    console.log("initialPrompt", initialPrompt);
-
     return {
-      visible: initialPrompt.visible || false,
+      visible: initialPrompt.visible,
       host: initiallyConnected && currentHost ? currentHost : defaultHost,
       port:
         initiallyConnected && currentPort != null
