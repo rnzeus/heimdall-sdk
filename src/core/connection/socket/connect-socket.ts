@@ -20,6 +20,7 @@ export function connectSocket(
   optionsOrSession: HeimdallSession | HeimdallConnectOptions
 ) {
   setLastError(null);
+
   const session: HeimdallSession = (optionsOrSession as HeimdallSession)
     .clientId
     ? (optionsOrSession as HeimdallSession)
@@ -34,12 +35,11 @@ export function connectSocket(
   const enabled = options.enabled ?? __DEV__;
   if (!enabled) return;
 
-  // if there is already a connection with the same parameters — do nothing
-
   const socket = getSocket();
   const connected = isConnected();
   const currentSession = getCurrentSession();
 
+  // If the socket is already connected and the session is the same, return
   if (
     socket &&
     connected &&
@@ -51,11 +51,21 @@ export function connectSocket(
     return;
   }
 
-  // break the old socket, if it was
-  if (socket || currentSession) {
-    disconnectSocket();
+  // If there is an old socket, close it only, without affecting earlyEvents/lastConnection
+  if (socket) {
+    try {
+      socket.removeAllListeners?.();
+      socket.end?.();
+      socket.destroy();
+    } catch {
+      // ignore
+    } finally {
+      setSocket(null);
+      setConnected(false);
+    }
   }
 
+  // Update the current session to the new one
   setCurrentSession(session);
 
   const newSocket = TcpSocket.createConnection(
@@ -66,27 +76,28 @@ export function connectSocket(
     () => {
       setConnected(true);
 
-      if (currentSession) {
-        const hello: HelloWireMessageV1 = {
-          kind: "hello",
-          v: 1,
-          channel: options.channel,
-          clientId: session.clientId,
-          sessionId: session.sessionId,
-          deviceName: options.deviceName,
-          platform: options.platform as HeimdallPlatform,
-          appId: options.appId,
-        };
+      // Take the actual session (if it changed)
+      const activeSession = getCurrentSession();
 
-        try {
-          newSocket!.write(JSON.stringify(hello) + "\r\n");
-        } catch {
-          // ignore
-        }
+      const hello: HelloWireMessageV1 = {
+        kind: "hello",
+        v: 1,
+        channel: options.channel,
+        clientId: activeSession?.clientId ?? session.clientId,
+        sessionId: activeSession?.sessionId ?? session.sessionId,
+        deviceName: options.deviceName,
+        platform: options.platform as HeimdallPlatform,
+        appId: options.appId,
+      };
 
-        // 🔥 after HELLO — send all events collected before connect()
-        flushEarlyEvents();
+      try {
+        newSocket.write(JSON.stringify(hello) + "\r\n");
+      } catch {
+        // ignore
       }
+
+      // After successful HELLO, send early events
+      flushEarlyEvents();
     }
   );
 

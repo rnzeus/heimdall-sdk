@@ -1,6 +1,10 @@
 import type { StateCreator, StoreMutatorIdentifier } from "zustand/vanilla";
-import { sendEvent, isSdkEnabled } from "../core/connection";
-import type { ZustandEventPayload } from "@rnzeus/heimdall-protocol";
+import {
+  sendEvent,
+  isSdkEnabled,
+  type ZustandEventPayload,
+} from "../core/connection";
+import { generateRandomId } from "../utils";
 
 /**
  * Heimdall middleware for Zustand.
@@ -65,10 +69,11 @@ export function heimdallZustand<
       const payload: ZustandEventPayload = {
         type: "zustand",
         store: storeName,
+        id: generateRandomId(),
         ts: Date.now(),
         state: nextState,
         prevState,
-        action: currentActionName,
+        action: currentActionName ?? "UNKNOWN",
       };
 
       prevState = nextState;
@@ -81,8 +86,10 @@ export function heimdallZustand<
       const initialPayload: ZustandEventPayload = {
         type: "zustand",
         store: storeName,
+        id: generateRandomId(),
         ts: Date.now(),
         state: prevState,
+        action: "INITIALIZED",
       };
       sendEvent(initialPayload);
     }

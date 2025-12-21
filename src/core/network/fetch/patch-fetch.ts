@@ -2,12 +2,9 @@ import { getFilters, isPatched, setFilters, setPatched } from "../state";
 import { shouldSkip } from "../utils";
 import { getOriginalFetch, setOriginalFetch } from "./state";
 import { NETWORK } from "../constants";
-import { parseUrl } from "../../../utils";
+import { generateRandomId, parseUrl } from "../../../utils";
 import { sendEvent } from "../../connection";
-import type {
-  NetworkEventPayload,
-  NetworkFilters,
-} from "@rnzeus/heimdall-protocol";
+import type { NetworkEventPayload, NetworkFilters } from "../../connection";
 
 export function patchFetch(options?: NetworkFilters) {
   if (!globalThis.fetch) return;
@@ -132,6 +129,7 @@ export function patchFetch(options?: NetworkFilters) {
        *   SEND EVENT
        * ------------------------- */
       const payload: NetworkEventPayload = {
+        id: generateRandomId(),
         type: "network",
         transport: "fetch",
         requestId,

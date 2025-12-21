@@ -21,7 +21,7 @@ export function disableCaptureEarlyEvents() {
 }
 
 export function pushEarlyEvent(payload: EventWirePayload) {
-  if (!captureEarlyEvents) return;
+  if (!getCaptureEarlyEvents()) return;
   earlyEvents.push(payload);
   if (earlyEvents.length > SOCKET.MAX_EARLY_EVENTS) {
     earlyEvents.shift();

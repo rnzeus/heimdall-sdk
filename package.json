@@ -1,49 +1,36 @@
 {
   "name": "@rnzeus/heimdall-sdk",
   "version": "0.0.3",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "react-native": "dist/index.js",
-  "private": false,
-  "sideEffects": false,
-  "files": [
-    "dist",
-    "zustand.js",
-    "zustand.d.ts"
-  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "react-native": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./zustand": {
       "types": "./dist/zustand/index.d.ts",
       "react-native": "./dist/zustand/index.js",
-      "import": "./dist/zustand/index.js",
       "default": "./dist/zustand/index.js"
     }
   },
-  "typesVersions": {
-    "*": {
-      "zustand": [
-        "dist/zustand/index.d.ts"
-      ]
-    }
-  },
-  "devDependencies": {
-    "@types/react": "^18.3.12",
-    "react": "^18.3.1",
-    "react-native": "^0.79.0",
-    "typescript": "^5.7.2",
-    "zustand": "^4.0.0",
-    "react-native-tcp-socket": "6.3.0",
-    "react-native-mmkv": "3.3.0"
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.72.0",
-    "react-native-tcp-socket": ">=6.3.0",
     "react-native-mmkv": ">=3.3.0",
+    "react-native-tcp-socket": ">=6.3.0",
     "zustand": ">=4"
   },
   "peerDependenciesMeta": {
@@ -51,10 +38,15 @@
       "optional": true
     }
   },
-  "scripts": {
-    "build": "tsc -p tsconfig.json"
-  },
   "dependencies": {
-    "@rnzeus/heimdall-protocol": "file:../heimdall-protocol"
+    "@rnzeus/heimdall-protocol": "^0.1.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "react": "^18.3.1",
+    "react-native": "^0.79.0",
+    "rimraf": "^6.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.2"
   }
 }
