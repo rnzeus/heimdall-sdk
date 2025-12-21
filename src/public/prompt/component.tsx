@@ -27,9 +27,17 @@ const HeimdallConnectPrompt = ({
       animationType="fade"
       visible={ui.visible}
       onRequestClose={onCancel}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "red",
+      }}
     >
       <View style={styles.backdrop}>
-        <View style={styles.modal}>
+        {/* <View style={styles.modal}>
           <Text style={styles.title}>Heimdall Connection</Text>
           <Text style={styles.subtitle}>
             {ui.isConnected
@@ -41,7 +49,6 @@ const HeimdallConnectPrompt = ({
             <Text style={styles.error}>{ui.errorMessage}</Text>
           ) : null}
 
-          {/* host */}
           <Text style={styles.label}>Host</Text>
           <TextInput
             value={ui.host}
@@ -53,7 +60,6 @@ const HeimdallConnectPrompt = ({
             placeholder="127.0.0.1"
           />
 
-          {/* port */}
           <Text style={styles.label}>Port</Text>
           <TextInput
             value={ui.port}
@@ -66,7 +72,6 @@ const HeimdallConnectPrompt = ({
             placeholder="35678"
           />
 
-          {/* channel + copy */}
           <Text style={styles.label}>Channel</Text>
           <View style={styles.inputWithIconRow}>
             <TextInput
@@ -99,7 +104,7 @@ const HeimdallConnectPrompt = ({
               <Button title="Connect" onPress={onConfirmConnect} />
             )}
           </View>
-        </View>
+        </View> */}
       </View>
     </Modal>
   );
