@@ -22,6 +22,7 @@ const HeimdallConnectPrompt = ({
   return (
     <Modal
       transparent
+      statusBarTranslucent
       animationType="fade"
       visible={ui.visible}
       onRequestClose={onCancel}

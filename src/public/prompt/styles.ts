@@ -2,9 +2,9 @@ import { Platform, StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   backdrop: {
+    ...StyleSheet.absoluteFillObject,
     alignItems: "center",
-    backgroundColor: "#0006",
-    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.38)",
     justifyContent: "center",
   },
   modal: {
