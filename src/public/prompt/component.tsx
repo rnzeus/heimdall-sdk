@@ -17,12 +17,13 @@ const HeimdallConnectPrompt = ({
     handleCopyChannel,
   } = usePrompt({ ...ui, onCopyToClipboard });
 
-  if (!ui.visible) return null;
-
   return (
     <Modal
       transparent
       statusBarTranslucent
+      hardwareAccelerated
+      presentationStyle="overFullScreen"
+      onDismiss={onCancel}
       animationType="fade"
       visible={ui.visible}
       onRequestClose={onCancel}
