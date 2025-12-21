@@ -1,10 +1,18 @@
-import { Modal, View, Text, TextInput, Button } from "react-native";
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Button,
+} from "react-native";
 import { Props } from "./types";
 import usePromptUi from "./use-prompt-ui";
 import usePrompt from "./use-prompt";
 import styles from "./styles";
 import { CopyButton } from "../copy-button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const HeimdallConnectPrompt = ({
   onCopyToClipboard,
@@ -18,11 +26,59 @@ const HeimdallConnectPrompt = ({
     handleCopyChannel,
   } = usePrompt({ ...ui, onCopyToClipboard });
 
-  if (!ui.visible) return null;
+  // Keep mounted during fade-out so Android doesn't "jump" layout when toggling.
+  const [mounted, setMounted] = useState<boolean>(ui.visible);
+  const opacity = useRef(new Animated.Value(ui.visible ? 1 : 0)).current;
+  const scale = useRef(new Animated.Value(ui.visible ? 1 : 0.98)).current;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (ui.visible) {
+      setMounted(true);
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 160,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: 160,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 140,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 0.98,
+          duration: 140,
+          useNativeDriver: true,
+        }),
+      ]).start(({ finished }) => {
+        if (cancelled) return;
+        if (finished) setMounted(false);
+      });
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [ui.visible, opacity, scale]);
+
+  if (!mounted) return null;
 
   return (
-    <View style={styles.backdrop}>
-      <View style={styles.modal}>
+    <Animated.View style={[styles.backdrop, { opacity }]}>
+      {/* Backdrop press target (behind modal) */}
+      <Pressable style={StyleSheet.absoluteFill} onPress={onCancel} />
+
+      <Animated.View style={[styles.modal, { transform: [{ scale }] }]}>
         <Text style={styles.title}>Heimdall Connection</Text>
         <Text style={styles.subtitle}>
           {ui.isConnected
@@ -89,8 +145,8 @@ const HeimdallConnectPrompt = ({
             <Button title="Connect" onPress={onConfirmConnect} />
           )}
         </View>
-      </View>
-    </View>
+      </Animated.View>
+    </Animated.View>
   );
 };
 
