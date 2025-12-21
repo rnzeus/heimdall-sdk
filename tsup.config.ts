@@ -17,6 +17,7 @@ export default defineConfig({
     "react",
     "react-native",
     "zustand",
+    "zustand/vanilla",
     "react-native-tcp-socket",
     "react-native-mmkv",
   ],

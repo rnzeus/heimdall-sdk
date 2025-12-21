@@ -31,7 +31,7 @@
     "react-native": ">=0.72.0",
     "react-native-mmkv": ">=3.3.0",
     "react-native-tcp-socket": ">=6.3.0",
-    "zustand": ">=4"
+    "zustand": ">=3"
   },
   "peerDependenciesMeta": {
     "zustand": {
@@ -45,6 +45,7 @@
     "@types/react": "^18.3.12",
     "react": "^18.3.1",
     "react-native": "^0.79.0",
+    "zustand": "^4.0.0",
     "rimraf": "^6.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.7.2"
