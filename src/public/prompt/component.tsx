@@ -18,103 +18,77 @@ const HeimdallConnectPrompt = ({
     handleCopyChannel,
   } = usePrompt({ ...ui, onCopyToClipboard });
 
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    if (ui.visible) {
-      const id = requestAnimationFrame(() => setReady(true));
-      return () => cancelAnimationFrame(id);
-    }
-    setReady(false);
-  }, [ui.visible]);
-
   return (
-    <Modal
-      transparent
-      statusBarTranslucent
-      hardwareAccelerated
-      presentationStyle="overFullScreen"
-      onDismiss={onCancel}
-      animationType="fade"
-      visible={ui.visible}
-      onRequestClose={onCancel}
-    >
-      {ready && (
-        <View style={styles.backdrop}>
-          <View style={styles.modal}>
-            <Text style={styles.title}>Heimdall Connection</Text>
-            <Text style={styles.subtitle}>
-              {ui.isConnected
-                ? "SDK is connected. You can disconnect from this Heimdall host."
-                : "Configure Heimdall host / port / channel for this session."}
-            </Text>
+    <View style={styles.backdrop}>
+      <View style={styles.modal}>
+        <Text style={styles.title}>Heimdall Connection</Text>
+        <Text style={styles.subtitle}>
+          {ui.isConnected
+            ? "SDK is connected. You can disconnect from this Heimdall host."
+            : "Configure Heimdall host / port / channel for this session."}
+        </Text>
 
-            {ui.errorMessage ? (
-              <Text style={styles.error}>{ui.errorMessage}</Text>
-            ) : null}
+        {ui.errorMessage ? (
+          <Text style={styles.error}>{ui.errorMessage}</Text>
+        ) : null}
 
-            <Text style={styles.label}>Host</Text>
-            <TextInput
-              value={ui.host}
-              onChangeText={(text) =>
-                setUi((prev) => ({ ...prev, host: text }))
-              }
-              style={[styles.input, isInputDisabled && styles.inputDisabled]}
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!isInputDisabled}
-              placeholder="127.0.0.1"
-            />
+        <Text style={styles.label}>Host</Text>
+        <TextInput
+          value={ui.host}
+          onChangeText={(text) => setUi((prev) => ({ ...prev, host: text }))}
+          style={[styles.input, isInputDisabled && styles.inputDisabled]}
+          autoCapitalize="none"
+          autoCorrect={false}
+          editable={!isInputDisabled}
+          placeholder="127.0.0.1"
+        />
 
-            <Text style={styles.label}>Port</Text>
-            <TextInput
-              value={ui.port}
-              onChangeText={(text) =>
-                setUi((prev) => ({ ...prev, port: text }))
-              }
-              style={[styles.input, isInputDisabled && styles.inputDisabled]}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="number-pad"
-              editable={!isInputDisabled}
-              placeholder="35678"
-            />
+        <Text style={styles.label}>Port</Text>
+        <TextInput
+          value={ui.port}
+          onChangeText={(text) => setUi((prev) => ({ ...prev, port: text }))}
+          style={[styles.input, isInputDisabled && styles.inputDisabled]}
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="number-pad"
+          editable={!isInputDisabled}
+          placeholder="35678"
+        />
 
-            <Text style={styles.label}>Channel</Text>
-            <View style={styles.inputWithIconRow}>
-              <TextInput
-                value={ui.channel}
-                onChangeText={(text) =>
-                  setUi((prev) => ({ ...prev, channel: text }))
-                }
-                style={[
-                  styles.input,
-                  styles.inputWithIcon,
-                  isInputDisabled && styles.inputDisabled,
-                ]}
-                autoCapitalize="none"
-                autoCorrect={false}
-                editable={!isInputDisabled}
-                placeholder="heimdall://session-xxxxxx"
-              />
-              <CopyButton
-                disabled={!ui.channel || !onCopyToClipboard}
-                onPress={handleCopyChannel}
-              />
-            </View>
-
-            <View style={styles.row}>
-              <Button title="Cancel" onPress={onCancel} />
-              <View style={styles.spacer} />
-              {ui.isConnected ? (
-                <Button title="Disconnect" onPress={onConfirmDisconnect} />
-              ) : (
-                <Button title="Connect" onPress={onConfirmConnect} />
-              )}
-            </View>
-          </View>
+        <Text style={styles.label}>Channel</Text>
+        <View style={styles.inputWithIconRow}>
+          <TextInput
+            value={ui.channel}
+            onChangeText={(text) =>
+              setUi((prev) => ({ ...prev, channel: text }))
+            }
+            style={[
+              styles.input,
+              styles.inputWithIcon,
+              isInputDisabled && styles.inputDisabled,
+            ]}
+            autoCapitalize="none"
+            autoCorrect={false}
+            editable={!isInputDisabled}
+            placeholder="heimdall://session-xxxxxx"
+          />
+          <CopyButton
+            disabled={!ui.channel || !onCopyToClipboard}
+            onPress={handleCopyChannel}
+          />
         </View>
-      )}
-    </Modal>
+
+        <View style={styles.row}>
+          <Button title="Cancel" onPress={onCancel} />
+          <View style={styles.spacer} />
+          {ui.isConnected ? (
+            <Button title="Disconnect" onPress={onConfirmDisconnect} />
+          ) : (
+            <Button title="Connect" onPress={onConfirmConnect} />
+          )}
+        </View>
+      </View>
+    </View>
   );
 };
 
