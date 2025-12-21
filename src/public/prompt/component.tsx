@@ -10,9 +10,10 @@ import {
 import { Props } from "./types";
 import usePromptUi from "./use-prompt-ui";
 import usePrompt from "./use-prompt";
+import usePromptAnimation from "./use-prompt-animation";
 import styles from "./styles";
 import { CopyButton } from "../copy-button";
-import { useEffect, useRef, useState } from "react";
+import { useMemo } from "react";
 
 const HeimdallConnectPrompt = ({
   onCopyToClipboard,
@@ -26,55 +27,21 @@ const HeimdallConnectPrompt = ({
     handleCopyChannel,
   } = usePrompt({ ...ui, onCopyToClipboard });
 
-  // Keep mounted during fade-out so Android doesn't "jump" layout when toggling.
-  const [mounted, setMounted] = useState<boolean>(ui.visible);
-  const opacity = useRef(new Animated.Value(ui.visible ? 1 : 0)).current;
-  const scale = useRef(new Animated.Value(ui.visible ? 1 : 0.98)).current;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    if (ui.visible) {
-      setMounted(true);
-      Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 160,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scale, {
-          toValue: 1,
-          duration: 160,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 140,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scale, {
-          toValue: 0.98,
-          duration: 140,
-          useNativeDriver: true,
-        }),
-      ]).start(({ finished }) => {
-        if (cancelled) return;
-        if (finished) setMounted(false);
-      });
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  }, [ui.visible, opacity, scale]);
+  const { mounted, opacity, scale } = usePromptAnimation({
+    visible: ui.visible,
+  });
+  const backdropPointerEvents = useMemo(
+    () => (ui.visible ? "auto" : "none"),
+    [ui.visible]
+  );
 
   if (!mounted) return null;
 
   return (
-    <Animated.View style={[styles.backdrop, { opacity }]}>
+    <Animated.View
+      style={[styles.backdrop, { opacity }]}
+      pointerEvents={backdropPointerEvents}
+    >
       {/* Backdrop press target (behind modal) */}
       <Pressable style={StyleSheet.absoluteFill} onPress={onCancel} />
 
