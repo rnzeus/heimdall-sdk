@@ -6,13 +6,17 @@ export default defineConfig({
     "zustand/index": "src/zustand/index.ts",
   },
   format: ["esm"],
-  dts: true,
-  sourcemap: true,
-  clean: true,
+  dts: false,
+  sourcemap: false,
+  clean: false,
   outDir: "dist",
   treeshake: true,
   target: "es2019",
   platform: "neutral",
+  splitting: false,
+  outExtension() {
+    return { js: ".js" };
+  },
   external: [
     "react",
     "react-native",

@@ -1,28 +1,29 @@
 {
   "name": "@rnzeus/heimdall-sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
+  "type": "module",
   "sideEffects": false,
   "files": [
     "dist"
   ],
-  "main": "dist/index.mjs",
-  "types": "dist/index.d.mts",
-  "react-native": "dist/index.mjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "react-native": "dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "react-native": "./dist/index.mjs",
-      "default": "./dist/index.mjs"
+      "types": "./dist/index.d.ts",
+      "react-native": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./zustand": {
-      "types": "./dist/zustand/index.d.mts",
-      "react-native": "./dist/zustand/index.mjs",
-      "default": "./dist/zustand/index.mjs"
+      "types": "./dist/zustand/index.d.ts",
+      "react-native": "./dist/zustand/index.js",
+      "default": "./dist/zustand/index.js"
     }
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "tsup",
+    "build": "npm run clean && tsup && tsc -p tsconfig.types.json",
     "dev": "tsup --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
