@@ -18,6 +18,8 @@ const HeimdallConnectPrompt = ({
     handleCopyChannel,
   } = usePrompt({ ...ui, onCopyToClipboard });
 
+  if (!ui.visible) return null;
+
   return (
     <View style={styles.backdrop}>
       <View style={styles.modal}>
