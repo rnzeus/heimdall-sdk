@@ -4,6 +4,7 @@ import usePromptUi from "./use-prompt-ui";
 import usePrompt from "./use-prompt";
 import styles from "./styles";
 import { CopyButton } from "../copy-button";
+import { useEffect, useState } from "react";
 
 const HeimdallConnectPrompt = ({
   onCopyToClipboard,
@@ -17,6 +18,15 @@ const HeimdallConnectPrompt = ({
     handleCopyChannel,
   } = usePrompt({ ...ui, onCopyToClipboard });
 
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (ui.visible) {
+      const id = requestAnimationFrame(() => setReady(true));
+      return () => cancelAnimationFrame(id);
+    }
+    setReady(false);
+  }, [ui.visible]);
+
   return (
     <Modal
       transparent
@@ -28,7 +38,7 @@ const HeimdallConnectPrompt = ({
       visible={ui.visible}
       onRequestClose={onCancel}
     >
-      {ui.visible && (
+      {ready && (
         <View style={styles.backdrop}>
           <View style={styles.modal}>
             <Text style={styles.title}>Heimdall Connection</Text>
