@@ -1,6 +1,6 @@
 {
   "name": "@rnzeus/heimdall-sdk",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -25,7 +25,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && tsup && tsc -p tsconfig.types.json",
+    "build": "yarn clean && tsup && tsc -p tsconfig.types.json",
     "dev": "tsup --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
