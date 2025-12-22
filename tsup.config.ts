@@ -7,14 +7,14 @@ export default defineConfig({
   },
   format: ["esm"],
   dts: false,
-  sourcemap: false,
   clean: false,
   outDir: "dist",
-  treeshake: false,
-  minify: false,
   target: "es2019",
   platform: "neutral",
-  splitting: false,
+  treeshake: false,
+  minify: false,
+  splitting: true,
+  sourcemap: true,
   outExtension() {
     return { js: ".js" };
   },
