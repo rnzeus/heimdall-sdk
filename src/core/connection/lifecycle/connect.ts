@@ -1,4 +1,4 @@
-import { patchFetch } from "../../network";
+import { patchXHR } from "../../network";
 import { resolveEnabled, setSdkEnabled } from "../sdk-enabled";
 import { createSession, setCurrentSession } from "../session";
 import type { HeimdallConnectOptions } from "../../../types";
@@ -15,20 +15,27 @@ export function connect(options: HeimdallConnectOptions) {
 
   const session = createSession(options);
 
-  // save session, but the connected flag will be set by socket.on("connect")
   setCurrentSession(session);
 
   try {
     connectSocket(session);
   } catch {
-    // if the TCP socket fails synchronously — rollback the state
     setCurrentSession(null);
     setSdkEnabled(false);
     return;
   }
 
-  patchFetch({
+  const patched = patchXHR({
     allowedHosts: options.allowedHosts,
     ignoreUrls: options.ignoreUrls,
   });
+  if (!patched) {
+    if (__DEV__) {
+      console.warn(
+        "[Heimdall] XHRInterceptor not available — network logs disabled."
+      );
+    } else {
+      // ignore, feature-specific logging
+    }
+  }
 }

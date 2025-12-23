@@ -1,4 +1,4 @@
-import { HeimdallConnectOptions } from "../../../types";
+import type { HeimdallConnectOptions } from "../../../types";
 
 export type HeimdallSession = {
   clientId: string;

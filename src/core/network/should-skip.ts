@@ -1,4 +1,4 @@
-import type { NetworkFilters } from "../../connection";
+import type { NetworkFilters } from "../../types";
 
 function matchList(value: string, list?: (string | RegExp)[]): boolean {
   if (!list || list.length === 0) return false;
@@ -13,7 +13,6 @@ export function shouldSkip(
   path: string,
   filters: NetworkFilters
 ): boolean {
-  // 1) Built-in ignore for RN dev services
   if (host.startsWith("localhost")) {
     if (
       path.startsWith("/symbolicate") ||
@@ -24,7 +23,6 @@ export function shouldSkip(
     }
   }
 
-  // 2) ignoreUrls
   if (
     matchList(url, filters.ignoreUrls) ||
     matchList(path, filters.ignoreUrls)
@@ -32,7 +30,6 @@ export function shouldSkip(
     return true;
   }
 
-  // 3) allowedHosts
   if (filters.allowedHosts && filters.allowedHosts.length > 0) {
     if (!matchList(host, filters.allowedHosts)) {
       return true;

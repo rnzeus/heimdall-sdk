@@ -1,4 +1,4 @@
-import type { NetworkFilters } from "../connection";
+import type { NetworkFilters } from "../../types";
 
 let patched = false;
 let filters: NetworkFilters = {};

@@ -1,11 +1,13 @@
-import { patchFetch } from "../../network";
+import { patchXHR } from "../../network";
 import { enableCaptureEarlyEvents } from "../socket";
+import type { HeimdallConnectOptions } from "../../../types";
 
-/**
- * Enables early event capture (before connect)
- * and sets patchFetch without filters.
- */
-export function setupEarlyEvents() {
+export function setupEarlyEvents(
+  defaults: Omit<HeimdallConnectOptions, "channel">
+) {
   enableCaptureEarlyEvents();
-  patchFetch(); // without filters; then connect() will update allowedHosts/ignoreUrls
+  patchXHR({
+    allowedHosts: defaults.allowedHosts,
+    ignoreUrls: defaults.ignoreUrls,
+  });
 }

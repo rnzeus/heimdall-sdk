@@ -1,5 +1,5 @@
 import { SOCKET } from "./constants";
-import { EventWirePayload } from "../protocol";
+import type { EventWirePayload } from "../../../types";
 
 const earlyEvents: EventWirePayload[] = [];
 let captureEarlyEvents = false;

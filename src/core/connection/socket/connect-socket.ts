@@ -14,7 +14,7 @@ import {
   setCurrentSession,
   type HeimdallSession,
 } from "../session";
-import { HelloWireMessageV1 } from "../protocol";
+import type { HelloWireMessageV1 } from "../../../types";
 
 export function connectSocket(
   optionsOrSession: HeimdallSession | HeimdallConnectOptions

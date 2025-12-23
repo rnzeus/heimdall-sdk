@@ -1,5 +1,6 @@
-import { Pressable, PressableProps, View } from "react-native";
+import { Pressable, View } from "react-native";
 import styles from "./styles";
+import type { PressableProps } from "react-native";
 
 const CopyButton = (props: PressableProps) => {
   return (

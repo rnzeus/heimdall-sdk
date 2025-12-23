@@ -1,1 +1,1 @@
-export { HeimdallConnectOptions } from "./options";
+export type { HeimdallConnectOptions } from "./options";

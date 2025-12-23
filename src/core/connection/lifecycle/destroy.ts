@@ -1,9 +1,9 @@
-import { restoreFetch } from "../../network";
+import { restoreXHR } from "../../network";
 import { destroySocket } from "../socket";
 import { setSdkEnabled } from "../sdk-enabled";
 
 export function destroy() {
-  restoreFetch();
+  restoreXHR();
   destroySocket();
   setSdkEnabled(false);
 }

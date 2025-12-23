@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { UsePromptProps } from "./types";
+import type { UsePromptProps } from "./types";
 import {
   connect,
   disconnect,

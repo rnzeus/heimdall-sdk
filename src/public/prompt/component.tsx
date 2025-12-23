@@ -7,7 +7,7 @@ import {
   View,
   Button,
 } from "react-native";
-import { Props } from "./types";
+import type { Props } from "./types";
 import usePromptUi from "./use-prompt-ui";
 import usePrompt from "./use-prompt";
 import usePromptAnimation from "./use-prompt-animation";

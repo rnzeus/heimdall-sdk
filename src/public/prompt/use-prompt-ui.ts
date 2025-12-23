@@ -9,7 +9,7 @@ import {
   subscribePrompt,
 } from "../../core/connection";
 import { useEffect, useState } from "react";
-import { PromptUiState } from "./types";
+import type { PromptUiState } from "./types";
 
 const usePromptUi = () => {
   const initialPrompt = getPromptState();

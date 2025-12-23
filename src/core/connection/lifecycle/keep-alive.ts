@@ -33,7 +33,7 @@ export function configureConnectPrompt(
 
   // early collection (before connect), if needed
   if (captureEarlyEvents) {
-    setupEarlyEvents();
+    setupEarlyEvents(rest);
   }
 
   // keepAlive: auto-connect, if there is a last connection
