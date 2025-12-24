@@ -4,7 +4,7 @@ import { generateRandomId, parseUrl } from "../../utils";
 import { sendEvent } from "../connection";
 import type { NetworkEventPayload, NetworkFilters } from "../../types";
 import type { HeadersMap, Meta, XHR } from "./xhr-types";
-import { normaliseHeaders } from "./headers";
+import { normaliseHeaderName, normaliseHeaders } from "./headers";
 import { safeBodySnippet, tryPrettifyJsonString } from "./body-snippet";
 import { nextXhrIndex } from "./xhr-runtime-state";
 import { readRNBlobAsText } from "./rn-blob";
@@ -42,7 +42,11 @@ export function createXhrCallbacks(deps: {
     const meta = requests.get(xhr._index);
     if (!meta) return;
 
-    meta.requestHeaders[String(header).toLowerCase()] = String(value);
+    const key = normaliseHeaderName(header);
+    if (!key) return;
+
+    if (value == null) return;
+    meta.requestHeaders[key] = String(value);
   };
 
   const headerReceivedCallback = (
@@ -54,10 +58,9 @@ export function createXhrCallbacks(deps: {
     const meta = requests.get(xhr._index);
     if (!meta) return;
 
-    xhr.responseHeaders = normaliseHeaders(responseHeaders);
+    meta.responseHeaders = normaliseHeaders(responseHeaders);
     meta.responseContentType = String(responseContentType ?? "");
     meta.responseSize = Number(responseSize ?? 0);
-    meta.responseHeaders = xhr.responseHeaders;
   };
 
   const sendCallback = (data: any, xhr: XHR) => {
@@ -97,7 +100,8 @@ export function createXhrCallbacks(deps: {
     const ok = typeof status === "number" && status >= 200 && status < 300;
 
     const responseHeaders: HeadersMap =
-      meta.responseHeaders ?? xhr.responseHeaders ?? {};
+      meta.responseHeaders ??
+      (xhr.responseHeaders ? normaliseHeaders(xhr.responseHeaders) : {});
 
     const responseContentType =
       meta.responseContentType || responseHeaders["content-type"];
