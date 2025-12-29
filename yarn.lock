@@ -620,10 +620,10 @@
     invariant "^2.2.4"
     nullthrows "^1.1.1"
 
-"@rnzeus/heimdall-protocol@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@rnzeus/heimdall-protocol/-/heimdall-protocol-0.1.3.tgz#d5a5a10236db0946377313512631316dfe8a2352"
-  integrity sha512-G0+TiJEPuRqacyxYMod5EI2QySAGhLKqmsasJkSwiS9dtuaNigTmlKxj0ZZCAizl95an7g50SEKyDkZ6b7s7tg==
+"@rnzeus/heimdall-protocol@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@rnzeus/heimdall-protocol/-/heimdall-protocol-0.1.4.tgz#95bfee3c5e95e23dbf56f3225fc1b3e73995c0b9"
+  integrity sha512-qYgLQo9Nf2bGT5Nh/wbF6c9pBv9a+lk7sE3enHn7Irdo/HISIcwnHsOFucBSg0Pjd1NobwZW6EBzvHL/zg8hDg==
   dependencies:
     zod "^4.1.13"
 

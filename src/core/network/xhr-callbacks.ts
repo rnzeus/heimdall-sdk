@@ -1,11 +1,10 @@
 import { shouldSkip } from "./should-skip";
-import { NETWORK } from "./constants";
 import { generateRandomId, parseUrl } from "../../utils";
 import { sendEvent } from "../connection";
 import type { NetworkEventPayload, NetworkFilters } from "../../types";
 import type { HeadersMap, Meta, XHR } from "./xhr-types";
 import { normaliseHeaderName, normaliseHeaders } from "./headers";
-import { safeBodySnippet, tryPrettifyJsonString } from "./body-snippet";
+import { buildBodySnippet } from "./body-snippet";
 import { nextXhrIndex } from "./xhr-runtime-state";
 import { readRNBlobAsText } from "./rn-blob";
 
@@ -71,9 +70,12 @@ export function createXhrCallbacks(deps: {
     meta.tsStart = tsStart;
     meta.requestId = `${tsStart}-${Math.random().toString(16).slice(2)}`;
 
-    const reqBody = safeBodySnippet(data);
+    const requestContentType = meta.requestHeaders["content-type"];
+    const reqBody = buildBodySnippet(data, { contentType: requestContentType });
     meta.requestBodySnippet = reqBody.snippet;
-    meta.requestBodySize = reqBody.size;
+    meta.requestBodySize = reqBody.sizeBytes;
+    meta.requestBodySnippetBytes = reqBody.snippetBytes;
+    meta.requestBodyTruncated = reqBody.truncated;
 
     if (reqBody.isBlob) {
       meta.__requestBlob = data;
@@ -106,9 +108,13 @@ export function createXhrCallbacks(deps: {
     const responseContentType =
       meta.responseContentType || responseHeaders["content-type"];
 
-    const resBody = safeBodySnippet(response);
+    const resBody = buildBodySnippet(response, {
+      contentType: responseContentType,
+    });
     let responseBodySnippet = resBody.snippet;
-    let responseBodySize = resBody.size;
+    let responseBodySize = resBody.sizeBytes;
+    let responseBodySnippetBytes = resBody.snippetBytes;
+    let responseBodyTruncated = resBody.truncated;
 
     if (resBody.isBlob) {
       meta.__responseBlob = response;
@@ -119,8 +125,12 @@ export function createXhrCallbacks(deps: {
     const basePayload: Omit<
       NetworkEventPayload,
       | "requestBodySnippet"
+      | "requestBodySnippetBytes"
+      | "requestBodyTruncated"
       | "requestBodySize"
       | "responseBodySnippet"
+      | "responseBodySnippetBytes"
+      | "responseBodyTruncated"
       | "responseBodySize"
     > = {
       id: generateRandomId(),
@@ -147,10 +157,13 @@ export function createXhrCallbacks(deps: {
       if (meta.__requestBlob) {
         try {
           const txt = await readRNBlobAsText(meta.__requestBlob);
-          const pretty = tryPrettifyJsonString(txt);
-          const out = pretty ?? txt;
-          meta.requestBodySnippet = out.slice(0, NETWORK.MAX_BODY_LENGTH);
-          meta.requestBodySize = out.length;
+          const reqBody = buildBodySnippet(txt, {
+            contentType: meta.requestHeaders["content-type"],
+          });
+          meta.requestBodySnippet = reqBody.snippet;
+          meta.requestBodySize = reqBody.sizeBytes;
+          meta.requestBodySnippetBytes = reqBody.snippetBytes;
+          meta.requestBodyTruncated = reqBody.truncated;
         } catch {
           // ignore
         }
@@ -159,10 +172,13 @@ export function createXhrCallbacks(deps: {
       if (meta.__responseBlob) {
         try {
           const txt = await readRNBlobAsText(meta.__responseBlob);
-          const pretty = tryPrettifyJsonString(txt);
-          const out = pretty ?? txt;
-          responseBodySnippet = out.slice(0, NETWORK.MAX_BODY_LENGTH);
-          responseBodySize = out.length;
+          const resBody = buildBodySnippet(txt, {
+            contentType: responseContentType,
+          });
+          responseBodySnippet = resBody.snippet;
+          responseBodySize = resBody.sizeBytes;
+          responseBodySnippetBytes = resBody.snippetBytes;
+          responseBodyTruncated = resBody.truncated;
         } catch {
           // ignore
         }
@@ -174,6 +190,10 @@ export function createXhrCallbacks(deps: {
         requestBodySize: meta.requestBodySize,
         responseBodySnippet,
         responseBodySize,
+        requestBodySnippetBytes: meta.requestBodySnippetBytes,
+        responseBodySnippetBytes,
+        requestBodyTruncated: meta.requestBodyTruncated,
+        responseBodyTruncated,
       };
 
       sendEvent(payload);

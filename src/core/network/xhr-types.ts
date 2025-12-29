@@ -18,12 +18,16 @@ export type Meta = {
   requestHeaders: HeadersMap;
   requestBodySnippet?: string;
   requestBodySize?: number;
+  requestBodySnippetBytes?: number;
+  requestBodyTruncated?: boolean;
 
   responseHeaders?: HeadersMap;
   responseContentType?: string;
   responseSize?: number;
   responseURL?: string;
   responseType?: string;
+  responseBodySnippetBytes?: number;
+  responseBodyTruncated?: boolean;
 
   __requestBlob?: any;
   __responseBlob?: any;
