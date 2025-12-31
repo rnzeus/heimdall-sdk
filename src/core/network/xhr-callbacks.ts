@@ -4,7 +4,7 @@ import { sendEvent } from "../connection";
 import type { NetworkEventPayload, NetworkFilters } from "../../types";
 import type { HeadersMap, Meta, XHR } from "./xhr-types";
 import { normaliseHeaderName, normaliseHeaders } from "./headers";
-import { buildBodySnippet } from "./body-snippet";
+import { buildBodySnippet, debugLog } from "../../utils";
 import { nextXhrIndex } from "./xhr-runtime-state";
 import { readRNBlobAsText } from "./rn-blob";
 
@@ -196,6 +196,10 @@ export function createXhrCallbacks(deps: {
         responseBodyTruncated,
       };
 
+      debugLog(
+        "network",
+        `sendEvent: ${meta.method} ${meta.url} status=${status} ok=${ok}`
+      );
       sendEvent(payload);
       requests.delete(xhr._index);
     };
