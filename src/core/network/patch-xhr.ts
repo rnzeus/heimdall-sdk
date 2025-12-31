@@ -3,8 +3,16 @@ import type { NetworkFilters } from "../../types";
 import { loadTryGetXHRInterceptorModule } from "./get-interceptor";
 import { createXhrCallbacks } from "./xhr-callbacks";
 import { getOrCreateHeimdallXhrState } from "./xhr-runtime-state";
+import { debugLog } from "../../utils";
 
 export function patchXHR(options?: NetworkFilters) {
+  debugLog(
+    "network",
+    `patchXHR called, allowedHosts=${JSON.stringify(
+      options?.allowedHosts
+    )}, ignoreUrls=${JSON.stringify(options?.ignoreUrls)}`
+  );
+
   if (typeof XMLHttpRequest === "undefined") return false;
 
   setFilters({
@@ -47,6 +55,8 @@ export function patchXHR(options?: NetworkFilters) {
 
   state.interceptor.enableInterception();
   state.enabled = true;
+
+  debugLog("network", "XHR interceptor enabled successfully");
 
   return true;
 }

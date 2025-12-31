@@ -5,4 +5,5 @@ export type {
   NetworkFilters,
   NetworkEventPayload,
   ZustandEventPayload,
+  WsEventPayload,
 } from "@rnzeus/heimdall-protocol";

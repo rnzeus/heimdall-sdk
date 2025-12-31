@@ -1,5 +1,21 @@
 declare const __DEV__: boolean;
 
+declare global {
+  interface Window {
+    __HEIMDALL_SDK_DEBUG__?: {
+      ws?: boolean;
+      network?: boolean;
+    };
+  }
+
+  var __HEIMDALL_SDK_DEBUG__:
+    | {
+        ws?: boolean;
+        network?: boolean;
+      }
+    | undefined;
+}
+
 declare module "react-native-mmkv" {
   export type MMKVConfiguration = {
     id?: string;
