@@ -1,6 +1,6 @@
 {
   "name": "@rnzeus/heimdall-sdk",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "type": "module",
   "sideEffects": false,
   "files": [
