@@ -1,35 +1,48 @@
 import {
   Animated,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Button,
+  useColorScheme,
 } from "react-native";
+import { useCallback, useMemo, useState, type JSX } from "react";
+
+import { getPromptState } from "../../core/connection";
+import { getCloudHostName } from "../../core/cloud";
+import { loadPromptMode, savePromptMode, type PromptMode } from "./prompt-mode";
+import { usePromptTheme } from "./theme";
 import type { Props } from "./types";
-import usePromptUi from "./use-prompt-ui";
 import usePrompt from "./use-prompt";
 import usePromptAnimation from "./use-prompt-animation";
+import usePromptUi from "./use-prompt-ui";
+import CloudView from "./views/cloud-view";
+import ConnectedView from "./views/connected-view";
+import ManualView from "./views/manual-view";
 import styles from "./styles";
-import { CopyButton } from "../copy-button";
-import { useMemo, type JSX } from "react";
 
 const HeimdallConnectPrompt = ({
   onCopyToClipboard,
 }: Props): JSX.Element | null => {
   const [ui, setUi] = usePromptUi();
-  const {
-    onCancel,
-    onConfirmConnect,
-    onConfirmDisconnect,
-    isInputDisabled,
-    handleCopyChannel,
-  } = usePrompt({ ...ui, onCopyToClipboard });
-
+  const { onCancel, onConfirmConnect, onConfirmDisconnect, handleCopyChannel } =
+    usePrompt({ ...ui, onCopyToClipboard });
   const { mounted, opacity, scale } = usePromptAnimation({
     visible: ui.visible,
   });
+  const theme = usePromptTheme();
+  const isDark = useColorScheme() === "dark";
+
+  const cloudUrl = getPromptState().defaults?.cloud?.url;
+  const [mode, setMode] = useState<PromptMode>(() =>
+    cloudUrl ? (loadPromptMode() ?? "cloud") : "manual"
+  );
+
+  const switchMode = useCallback((next: PromptMode) => {
+    setMode(next);
+    savePromptMode(next);
+  }, []);
+
   const backdropPointerEvents = useMemo(
     () => (ui.visible ? "auto" : "none"),
     [ui.visible]
@@ -37,82 +50,70 @@ const HeimdallConnectPrompt = ({
 
   if (!mounted) return null;
 
+  const canCopy = Boolean(ui.channel && onCopyToClipboard);
+
+  const renderContent = () => {
+    if (ui.isConnected) {
+      return (
+        <ConnectedView
+          hostLabel={getCloudHostName(ui.channel) ?? `${ui.host}:${ui.port}`}
+          channel={ui.channel}
+          theme={theme}
+          isDark={isDark}
+          canCopy={canCopy}
+          onCopyChannel={handleCopyChannel}
+          onClose={onCancel}
+          onDisconnect={onConfirmDisconnect}
+        />
+      );
+    }
+
+    if (cloudUrl && mode === "cloud") {
+      return (
+        <CloudView
+          baseUrl={cloudUrl}
+          visible={ui.visible}
+          socketError={ui.errorMessage}
+          theme={theme}
+          onManual={() => switchMode("manual")}
+        />
+      );
+    }
+
+    return (
+      <ManualView
+        ui={ui}
+        setUi={setUi}
+        theme={theme}
+        isDark={isDark}
+        canCopy={canCopy}
+        onCopyChannel={handleCopyChannel}
+        onConnect={onConfirmConnect}
+        onBack={cloudUrl ? () => switchMode("cloud") : undefined}
+      />
+    );
+  };
+
   return (
     <Animated.View
-      style={[styles.backdrop, { opacity }]}
+      style={[styles.backdrop, { backgroundColor: theme.backdrop, opacity }]}
       pointerEvents={backdropPointerEvents}
     >
-      {/* Backdrop press target (behind modal) */}
       <Pressable style={StyleSheet.absoluteFill} onPress={onCancel} />
-
-      <Animated.View style={[styles.modal, { transform: [{ scale }] }]}>
-        <Text style={styles.title}>Heimdall Connection</Text>
-        <Text style={styles.subtitle}>
-          {ui.isConnected
-            ? "SDK is connected. You can disconnect from this Heimdall host."
-            : "Configure Heimdall host / port / channel for this session."}
-        </Text>
-
-        {ui.errorMessage ? (
-          <Text style={styles.error}>{ui.errorMessage}</Text>
-        ) : null}
-
-        <Text style={styles.label}>Host</Text>
-        <TextInput
-          value={ui.host}
-          onChangeText={(text) => setUi((prev) => ({ ...prev, host: text }))}
-          style={[styles.input, isInputDisabled && styles.inputDisabled]}
-          autoCapitalize="none"
-          autoCorrect={false}
-          editable={!isInputDisabled}
-          placeholder="127.0.0.1"
-        />
-
-        <Text style={styles.label}>Port</Text>
-        <TextInput
-          value={ui.port}
-          onChangeText={(text) => setUi((prev) => ({ ...prev, port: text }))}
-          style={[styles.input, isInputDisabled && styles.inputDisabled]}
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="number-pad"
-          editable={!isInputDisabled}
-          placeholder="35678"
-        />
-
-        <Text style={styles.label}>Channel</Text>
-        <View style={styles.inputWithIconRow}>
-          <TextInput
-            value={ui.channel}
-            onChangeText={(text) =>
-              setUi((prev) => ({ ...prev, channel: text }))
-            }
-            style={[
-              styles.input,
-              styles.inputWithIcon,
-              isInputDisabled && styles.inputDisabled,
-            ]}
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!isInputDisabled}
-            placeholder="heimdall://session-xxxxxx"
-          />
-          <CopyButton
-            disabled={!ui.channel || !onCopyToClipboard}
-            onPress={handleCopyChannel}
-          />
-        </View>
-
-        <View style={styles.row}>
-          <Button title="Cancel" onPress={onCancel} />
-          <View style={styles.spacer} />
-          {ui.isConnected ? (
-            <Button title="Disconnect" onPress={onConfirmDisconnect} />
-          ) : (
-            <Button title="Connect" onPress={onConfirmConnect} />
-          )}
-        </View>
-      </Animated.View>
+      <KeyboardAvoidingView
+        style={styles.keyboard}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        pointerEvents="box-none"
+      >
+        <Animated.View
+          style={[
+            styles.card,
+            { backgroundColor: theme.card, transform: [{ scale }] },
+          ]}
+        >
+          {renderContent()}
+        </Animated.View>
+      </KeyboardAvoidingView>
     </Animated.View>
   );
 };

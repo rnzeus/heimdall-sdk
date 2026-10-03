@@ -12,6 +12,14 @@ export default StyleSheet.create({
   copyButtonDisabled: {
     opacity: 0.4,
   },
+  copyButtonDark: {
+    backgroundColor: "#23272F",
+    borderColor: "#2D323C",
+  },
+  copyIconDark: {
+    backgroundColor: "#23272F",
+    borderColor: "#9CA3AF",
+  },
   copyIconWrapper: {
     alignItems: "center",
     flex: 1,

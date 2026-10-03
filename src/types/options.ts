@@ -21,4 +21,6 @@ export type HeimdallConnectOptions = {
   captureEarlyEvents?: boolean;
   /** keep the connection alive (default: false) */
   keepAlive?: boolean;
+  /** heimdall-cloud service: enables "Find me" device linking in the connect prompt */
+  cloud?: { url: string };
 };
