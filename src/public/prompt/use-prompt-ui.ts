@@ -8,6 +8,7 @@ import {
   isConnected,
   loadLastConnection,
   subscribePrompt,
+  subscribeSocketState,
 } from "../../core/connection";
 import { useEffect, useState } from "react";
 import type { PromptUiState } from "./types";
@@ -101,6 +102,30 @@ const usePromptUi = () => {
 
     return unsubscribe;
   }, []);
+
+  useEffect(
+    () =>
+      subscribeSocketState(() => {
+        const connectedNow = isConnected();
+        const lastError = getLastError();
+        setUi((prev) => ({
+          ...prev,
+          isConnected: connectedNow,
+          errorMessage: lastError ?? null,
+          ...(connectedNow
+            ? {
+                host: getCurrentHost() ?? prev.host,
+                port:
+                  getCurrentPort() != null
+                    ? String(getCurrentPort())
+                    : prev.port,
+                channel: getCurrentChannel() ?? prev.channel,
+              }
+            : {}),
+        }));
+      }),
+    []
+  );
 
   return [ui, setUi] as const;
 };

@@ -10,7 +10,11 @@ import {
 } from "../../core/connection";
 import { generateChannelId } from "../../core/connection";
 
-const usePrompt = (props: UsePromptProps) => {
+const usePrompt = (
+  props: UsePromptProps & {
+    startConnecting: (connectFn: () => void) => void;
+  }
+) => {
   const onCancel = () => {
     hidePrompt();
   };
@@ -35,10 +39,7 @@ const usePrompt = (props: UsePromptProps) => {
       channel = generateChannelId(slug);
     }
 
-    // try to connect: if there is an error, it will come from connect-socket
-    connect({ ...defaults, channel, host, port });
-
-    hidePrompt();
+    props.startConnecting(() => connect({ ...defaults, channel, host, port }));
   };
 
   const onConfirmDisconnect = () => {

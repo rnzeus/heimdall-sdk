@@ -18,6 +18,7 @@ type Props = {
   onCopyChannel: () => void;
   onConnect: () => void;
   onBack?: () => void;
+  isConnecting: boolean;
 };
 
 const ManualView = ({
@@ -29,7 +30,9 @@ const ManualView = ({
   onCopyChannel,
   onConnect,
   onBack,
+  isConnecting,
 }: Props): JSX.Element => {
+  const error = isConnecting ? null : ui.errorMessage;
   const inputStyle = [
     styles.input,
     {
@@ -44,7 +47,7 @@ const ManualView = ({
     <>
       <Header
         title="Heimdall"
-        status={ui.errorMessage ? "error" : "idle"}
+        status={isConnecting ? "busy" : error ? "error" : "idle"}
         theme={theme}
       />
 
@@ -55,6 +58,7 @@ const ManualView = ({
         style={inputStyle}
         autoCapitalize="none"
         autoCorrect={false}
+        editable={!isConnecting}
         placeholder="127.0.0.1"
         placeholderTextColor={theme.idle}
       />
@@ -65,6 +69,7 @@ const ManualView = ({
         onChangeText={(text) => setUi((prev) => ({ ...prev, port: text }))}
         style={inputStyle}
         keyboardType="number-pad"
+        editable={!isConnecting}
         placeholder="35678"
         placeholderTextColor={theme.idle}
       />
@@ -77,6 +82,7 @@ const ManualView = ({
           style={[inputStyle, styles.inputFlex]}
           autoCapitalize="none"
           autoCorrect={false}
+          editable={!isConnecting}
           placeholder="heimdall://session-xxxxxx"
           placeholderTextColor={theme.idle}
         />
@@ -87,10 +93,8 @@ const ManualView = ({
         />
       </View>
 
-      {ui.errorMessage ? (
-        <Text style={[styles.error, { color: theme.danger }]}>
-          {ui.errorMessage}
-        </Text>
+      {error ? (
+        <Text style={[styles.error, { color: theme.danger }]}>{error}</Text>
       ) : null}
 
       <Footer
@@ -100,12 +104,18 @@ const ManualView = ({
               title="Back"
               variant="link"
               theme={theme}
+              disabled={isConnecting}
               onPress={onBack}
             />
           ) : null
         }
         primary={
-          <ActionButton title="Connect" theme={theme} onPress={onConnect} />
+          <ActionButton
+            title={isConnecting ? "Connecting…" : "Connect"}
+            theme={theme}
+            disabled={isConnecting}
+            onPress={onConnect}
+          />
         }
       />
     </>

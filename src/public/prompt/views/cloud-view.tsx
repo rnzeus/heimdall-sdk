@@ -13,6 +13,8 @@ type Props = {
   visible: boolean;
   socketError: string | null;
   theme: PromptTheme;
+  isConnecting: boolean;
+  startConnecting: (connectFn: () => void) => void;
   onManual: () => void;
 };
 
@@ -21,6 +23,8 @@ const CloudView = ({
   visible,
   socketError,
   theme,
+  isConnecting,
+  startConnecting,
   onManual,
 }: Props): JSX.Element => {
   const {
@@ -31,10 +35,10 @@ const CloudView = ({
     onCancelLinking,
     onConnect,
     onUnlink,
-  } = useCloudView({ baseUrl, visible });
+  } = useCloudView({ baseUrl, visible, startConnecting });
 
-  const error = message ?? socketError;
-  const isBusy = phase !== "idle";
+  const error = isConnecting ? null : (message ?? socketError);
+  const isBusy = phase !== "idle" || isConnecting;
 
   if (phase === "linking") {
     return (
@@ -95,7 +99,7 @@ const CloudView = ({
         }
         primary={
           <ActionButton
-            title={deviceName ? "Connect" : "Find me"}
+            title={isConnecting ? "Connecting…" : deviceName ? "Connect" : "Find me"}
             theme={theme}
             disabled={isBusy}
             onPress={deviceName ? onConnect : onFindMe}

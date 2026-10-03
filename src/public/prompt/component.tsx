@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useCallback, useMemo, useState, type JSX } from "react";
 
-import { getPromptState } from "../../core/connection";
+import { getPromptState, setLastError } from "../../core/connection";
 import { getCloudHostName } from "../../core/cloud";
 import { loadPromptMode, savePromptMode, type PromptMode } from "./prompt-mode";
 import { usePromptTheme } from "./theme";
@@ -16,6 +16,7 @@ import type { Props } from "./types";
 import usePrompt from "./use-prompt";
 import usePromptAnimation from "./use-prompt-animation";
 import usePromptUi from "./use-prompt-ui";
+import useConnectAwaiter from "./use-connect-awaiter";
 import CloudView from "./views/cloud-view";
 import ConnectedView from "./views/connected-view";
 import ManualView from "./views/manual-view";
@@ -25,8 +26,11 @@ const HeimdallConnectPrompt = ({
   onCopyToClipboard,
 }: Props): JSX.Element | null => {
   const [ui, setUi] = usePromptUi();
+  const { isConnecting, startConnecting } = useConnectAwaiter({
+    visible: ui.visible,
+  });
   const { onCancel, onConfirmConnect, onConfirmDisconnect, handleCopyChannel } =
-    usePrompt({ ...ui, onCopyToClipboard });
+    usePrompt({ ...ui, onCopyToClipboard, startConnecting });
   const { mounted, opacity, scale } = usePromptAnimation({
     visible: ui.visible,
   });
@@ -39,6 +43,7 @@ const HeimdallConnectPrompt = ({
   );
 
   const switchMode = useCallback((next: PromptMode) => {
+    setLastError(null);
     setMode(next);
     savePromptMode(next);
   }, []);
@@ -75,6 +80,8 @@ const HeimdallConnectPrompt = ({
           visible={ui.visible}
           socketError={ui.errorMessage}
           theme={theme}
+          isConnecting={isConnecting}
+          startConnecting={startConnecting}
           onManual={() => switchMode("manual")}
         />
       );
@@ -90,6 +97,7 @@ const HeimdallConnectPrompt = ({
         onCopyChannel={handleCopyChannel}
         onConnect={onConfirmConnect}
         onBack={cloudUrl ? () => switchMode("cloud") : undefined}
+        isConnecting={isConnecting}
       />
     );
   };

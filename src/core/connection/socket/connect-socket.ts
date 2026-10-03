@@ -10,6 +10,7 @@ import {
 import { handleSocketLost } from "./handle-socket-lost";
 import { flushEarlyEvents } from "./flush-early-events";
 import { normalizeSocketError } from "./normalize-socket-error";
+import { SOCKET } from "./constants";
 import {
   getCurrentSession,
   setCurrentSession,
@@ -75,6 +76,7 @@ export function connectSocket(
       port: options.port,
     },
     () => {
+      clearTimeout(connectTimeout);
       setConnected(true);
 
       // Take the actual session (if it changed)
@@ -102,7 +104,16 @@ export function connectSocket(
     }
   );
 
+  const connectTimeout = setTimeout(() => {
+    if (getSocket() !== newSocket || isConnected()) return;
+    setLastError(
+      `Can't reach Heimdall at ${options.host}:${options.port}. Same Wi-Fi?`
+    );
+    handleSocketLost();
+  }, SOCKET.CONNECT_TIMEOUT_MS);
+
   newSocket.on("error", (error: unknown) => {
+    clearTimeout(connectTimeout);
     const message = normalizeSocketError(error);
     setLastError(message);
     if (__DEV__) {
@@ -112,6 +123,7 @@ export function connectSocket(
   });
 
   newSocket.on("close", () => {
+    clearTimeout(connectTimeout);
     handleSocketLost();
   });
 

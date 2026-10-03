@@ -11,7 +11,6 @@ import {
   connect,
   createCloudResolver,
   getPromptState,
-  hidePrompt,
 } from "../../../core/connection";
 
 type Phase = "idle" | "linking" | "connecting";
@@ -19,9 +18,11 @@ type Phase = "idle" | "linking" | "connecting";
 const useCloudView = ({
   baseUrl,
   visible,
+  startConnecting,
 }: {
   baseUrl: string;
   visible: boolean;
+  startConnecting: (connectFn: () => void) => void;
 }) => {
   const [deviceName, setDeviceName] = useState<string | null>(
     () => loadCloudDevice()?.name ?? null
@@ -79,13 +80,14 @@ const useCloudView = ({
         return;
       }
       setLastCloudTarget({ channel: target.channel, hostName: target.hostName });
-      connect({
-        ...defaults,
-        host: target.host,
-        port: target.port,
-        channel: target.channel,
-      });
-      hidePrompt();
+      startConnecting(() =>
+        connect({
+          ...defaults,
+          host: target.host,
+          port: target.port,
+          channel: target.channel,
+        })
+      );
     } catch {
       const stillLinked = loadCloudDevice();
       setDeviceName(stillLinked?.name ?? null);
@@ -97,7 +99,7 @@ const useCloudView = ({
     } finally {
       setPhase("idle");
     }
-  }, [baseUrl, deviceName]);
+  }, [baseUrl, deviceName, startConnecting]);
 
   const onUnlink = useCallback(async () => {
     const device = loadCloudDevice();
