@@ -13,7 +13,7 @@ import usePrompt from "./use-prompt";
 import usePromptAnimation from "./use-prompt-animation";
 import styles from "./styles";
 import { CopyButton } from "../copy-button";
-import { useMemo } from "react";
+import { useMemo, type JSX } from "react";
 
 const HeimdallConnectPrompt = ({
   onCopyToClipboard,
