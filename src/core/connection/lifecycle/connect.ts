@@ -4,6 +4,7 @@ import { resolveEnabled, setSdkEnabled } from "../sdk-enabled";
 import { createSession, setCurrentSession } from "../session";
 import type { HeimdallConnectOptions } from "../../../types";
 import { connectSocket } from "../socket";
+import { registerCloudUrl } from "../../cloud/state";
 
 export function connect(options: HeimdallConnectOptions) {
   const enabled = resolveEnabled(options.enabled);
@@ -13,6 +14,7 @@ export function connect(options: HeimdallConnectOptions) {
   }
 
   setSdkEnabled(true);
+  registerCloudUrl(options.cloud?.url);
 
   const session = createSession(options);
 

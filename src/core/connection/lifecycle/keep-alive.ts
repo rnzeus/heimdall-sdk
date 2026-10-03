@@ -4,6 +4,7 @@ import type { HeimdallConnectOptions } from "../../../types";
 import { setSdkEnabled, resolveEnabled } from "../sdk-enabled";
 import { setupEarlyEvents } from "./early-events";
 import { connect } from "./connect";
+import { registerCloudUrl } from "../../cloud/state";
 
 /**
  * Configure connect prompt + captureEarlyEvents + keepAlive.
@@ -25,6 +26,7 @@ export function configureConnectPrompt(
   }
 
   setSdkEnabled(true);
+  registerCloudUrl(rest.cloud?.url);
 
   setPromptDefaults({
     ...rest,

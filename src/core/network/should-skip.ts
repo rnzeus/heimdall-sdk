@@ -1,4 +1,5 @@
 import type { NetworkFilters } from "../../types";
+import { isCloudHost } from "../cloud/state";
 
 function matchList(value: string, list?: (string | RegExp)[]): boolean {
   if (!list || list.length === 0) return false;
@@ -13,6 +14,8 @@ export function shouldSkip(
   path: string,
   filters: NetworkFilters
 ): boolean {
+  if (isCloudHost(host)) return true;
+
   if (host.startsWith("localhost")) {
     if (
       path.startsWith("/symbolicate") ||
