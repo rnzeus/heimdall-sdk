@@ -9,6 +9,7 @@ import {
 } from "./state";
 import { disconnectSocket } from "./disconnect-socket";
 import { flushEarlyEvents } from "./flush-early-events";
+import { normalizeSocketError } from "./normalize-socket-error";
 import {
   getCurrentSession,
   setCurrentSession,
@@ -101,8 +102,12 @@ export function connectSocket(
     }
   );
 
-  newSocket.on("error", (error: any) => {
-    setLastError(String(error?.message ?? "Unknown socket error"));
+  newSocket.on("error", (error: unknown) => {
+    const message = normalizeSocketError(error);
+    setLastError(message);
+    if (__DEV__) {
+      console.warn("[Heimdall] socket error:", message);
+    }
     disconnectSocket();
   });
 
