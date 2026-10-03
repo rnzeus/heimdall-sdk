@@ -6,6 +6,7 @@ import {
   getLastError,
   getPromptState,
   isConnected,
+  loadLastConnection,
   subscribePrompt,
 } from "../../core/connection";
 import { useEffect, useState } from "react";
@@ -20,9 +21,13 @@ const usePromptUi = () => {
   const initialError = getLastError();
 
   const [ui, setUi] = useState<PromptUiState>(() => {
-    const defaultHost = initialPrompt.defaults?.host ?? "127.0.0.1";
-    const defaultPort = String(initialPrompt.defaults?.port ?? 35678);
-    const defaultChannel = generateChannelId("session");
+    const last = loadLastConnection();
+    const defaultHost =
+      last?.host ?? initialPrompt.defaults?.host ?? "127.0.0.1";
+    const defaultPort = String(
+      last?.port ?? initialPrompt.defaults?.port ?? 35678
+    );
+    const defaultChannel = last?.channel ?? generateChannelId("session");
 
     return {
       visible: initialPrompt.visible,
@@ -62,12 +67,17 @@ const usePromptUi = () => {
           }
 
           const defaults = s.defaults;
-          const host = defaults?.host ?? prev.host ?? "127.0.0.1";
-          const port = String(defaults?.port ?? (Number(prev.port) || 35678));
+          const last = loadLastConnection();
+          const host =
+            last?.host ?? defaults?.host ?? prev.host ?? "127.0.0.1";
+          const port = String(
+            last?.port ?? defaults?.port ?? (Number(prev.port) || 35678)
+          );
           const channel =
-            prev.channel && !prev.isConnected
+            last?.channel ??
+            (prev.channel && !prev.isConnected
               ? prev.channel
-              : generateChannelId("session");
+              : generateChannelId("session"));
 
           return {
             visible: true,

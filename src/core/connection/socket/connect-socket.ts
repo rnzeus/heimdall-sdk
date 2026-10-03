@@ -7,7 +7,7 @@ import {
   setSocket,
   setLastError,
 } from "./state";
-import { disconnectSocket } from "./disconnect-socket";
+import { handleSocketLost } from "./handle-socket-lost";
 import { flushEarlyEvents } from "./flush-early-events";
 import { normalizeSocketError } from "./normalize-socket-error";
 import {
@@ -108,11 +108,11 @@ export function connectSocket(
     if (__DEV__) {
       console.warn("[Heimdall] socket error:", message);
     }
-    disconnectSocket();
+    handleSocketLost();
   });
 
   newSocket.on("close", () => {
-    disconnectSocket();
+    handleSocketLost();
   });
 
   setSocket(newSocket);
