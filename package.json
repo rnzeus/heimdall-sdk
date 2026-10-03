@@ -58,5 +58,10 @@
     "rimraf": "^6.0.0",
     "typescript": "^5.7.2",
     "zustand": "^4.0.0"
+  },
+  "packageManager": "yarn@4.6.0",
+  "volta": {
+    "node": "22.14.0",
+    "yarn": "4.6.0"
   }
 }
