@@ -28,9 +28,9 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "yarn clean && tsc -p tsconfig.build.json && node scripts/fix-esm-extensions.mjs dist && node scripts/minify-dist.mjs dist",
+    "build": "node scripts/write-version.mjs && yarn clean && tsc -p tsconfig.build.json && node scripts/fix-esm-extensions.mjs dist && node scripts/minify-dist.mjs dist",
     "dev": "tsc -p tsconfig.build.json -w",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "node scripts/write-version.mjs && tsc -p tsconfig.json --noEmit"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

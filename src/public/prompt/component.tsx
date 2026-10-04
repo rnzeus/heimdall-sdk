@@ -20,6 +20,7 @@ import useConnectAwaiter from "./use-connect-awaiter";
 import CloudView from "./views/cloud-view";
 import ConnectedView from "./views/connected-view";
 import ManualView from "./views/manual-view";
+import ReportLink from "./ui/report-link";
 import styles from "./styles";
 
 const HeimdallConnectPrompt = ({
@@ -120,6 +121,7 @@ const HeimdallConnectPrompt = ({
           ]}
         >
           {renderContent()}
+          {cloudUrl ? <ReportLink baseUrl={cloudUrl} theme={theme} /> : null}
         </Animated.View>
       </KeyboardAvoidingView>
     </Animated.View>

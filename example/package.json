@@ -35,5 +35,9 @@
   "engines": {
     "node": ">= 22.11.0"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.6.0",
+  "volta": {
+    "node": "22.14.0",
+    "yarn": "4.6.0"
+  }
 }
