@@ -31,6 +31,22 @@ export const NETWORK_SCENARIOS: { title: string; run: (log: Log) => Promise<void
         log,
       }),
   },
+  {
+    title: 'Auth headers',
+    run: log =>
+      request({
+        label: 'Auth headers',
+        url: `${HTTPBIN}/headers?token=example-query-token&page=1`,
+        init: {
+          headers: {
+            Authorization: 'Bearer example-access-token',
+            'X-Api-Key': 'example-api-key',
+            Cookie: 'session=example-session-cookie',
+          },
+        },
+        log,
+      }),
+  },
   { title: 'GET 404', run: log => request({ label: 'GET 404', url: `${HTTPBIN}/status/404`, log }) },
   { title: 'GET 500', run: log => request({ label: 'GET 500', url: `${HTTPBIN}/status/500`, log }) },
   { title: 'Slow 3s', run: log => request({ label: 'Slow 3s', url: `${HTTPBIN}/delay/3`, log }) },
