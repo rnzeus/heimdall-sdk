@@ -16,6 +16,8 @@ import {
   setCurrentSession,
   type HeimdallSession,
 } from "../session";
+import { SDK_VERSION } from "../../../version";
+import { normaliseAppInfo, readDeviceInfo } from "../../system";
 import type { HelloWireMessageV1 } from "../../../types";
 
 export function connectSocket(
@@ -91,7 +93,12 @@ export function connectSocket(
         deviceName: options.deviceName,
         platform: options.platform as HeimdallPlatform,
         appId: options.appId,
+        sdkVersion: SDK_VERSION,
       };
+      const device = readDeviceInfo();
+      if (device) hello.device = device;
+      const app = normaliseAppInfo(options.app);
+      if (app) hello.app = app;
 
       try {
         newSocket.write(JSON.stringify(hello) + "\r\n");

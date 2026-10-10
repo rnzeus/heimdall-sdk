@@ -1,1 +1,1 @@
-// auto-generated barrel
+export * from "./device-info";
