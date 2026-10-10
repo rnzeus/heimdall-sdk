@@ -27,3 +27,21 @@ export function normaliseHeaders(input: any): HeadersMap {
 
   return out;
 }
+
+/** Parses the raw "name: value\r\n" block returned by getAllResponseHeaders(). */
+export function parseRawHeaders(raw: string): HeadersMap {
+  const out: HeadersMap = {};
+  for (const line of raw.split(/\r?\n/)) {
+    const index = line.indexOf(":");
+    if (index <= 0) continue;
+    const key = normaliseHeaderName(line.slice(0, index));
+    if (!key) continue;
+    const value = line.slice(index + 1).trim();
+    out[key] = key in out ? `${out[key]}, ${value}` : value;
+  }
+  return out;
+}
+
+export function normaliseResponseHeaders(input: any): HeadersMap {
+  return typeof input === "string" ? parseRawHeaders(input) : normaliseHeaders(input);
+}
