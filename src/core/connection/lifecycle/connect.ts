@@ -1,5 +1,6 @@
 import { patchXHR } from "../../network";
 import { patchWebSocket } from "../../websocket";
+import { patchConsole } from "../../console";
 import { resolveEnabled, setSdkEnabled } from "../sdk-enabled";
 import { createSession, setCurrentSession } from "../session";
 import type { HeimdallConnectOptions } from "../../../types";
@@ -46,4 +47,8 @@ export function connect(options: HeimdallConnectOptions) {
     allowedHosts: options.allowedHosts,
     ignoreUrls: options.ignoreUrls,
   });
+
+  if (options.captureConsole !== false) {
+    patchConsole();
+  }
 }

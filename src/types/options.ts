@@ -21,6 +21,10 @@ export type HeimdallConnectOptions = {
   captureEarlyEvents?: boolean;
   /** keep the connection alive (default: false) */
   keepAlive?: boolean;
+  /** capture console.* calls, uncaught JS errors and unhandled promise rejections (default: true) */
+  captureConsole?: boolean;
+  /** app details shown in heimdall, e.g. from react-native-device-info */
+  app?: { version?: string; build?: string; environment?: string };
   /** heimdall-cloud service: enables "Find me" device linking in the connect prompt */
   cloud?: { url: string };
 };

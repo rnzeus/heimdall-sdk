@@ -4,6 +4,7 @@ declare global {
   interface Window {
     __HEIMDALL_SDK_DEBUG__?: {
       ws?: boolean;
+      console?: boolean;
       network?: boolean;
     };
   }
@@ -11,6 +12,7 @@ declare global {
   var __HEIMDALL_SDK_DEBUG__:
     | {
         ws?: boolean;
+      console?: boolean;
         network?: boolean;
       }
     | undefined;

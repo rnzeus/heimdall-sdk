@@ -6,4 +6,7 @@ export type {
   NetworkEventPayload,
   ZustandEventPayload,
   WsEventPayload,
+  ConsoleEventPayload,
+  HelloAppInfo,
+  HelloDeviceInfo,
 } from "@rnzeus/heimdall-protocol";

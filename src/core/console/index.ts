@@ -1,1 +1,2 @@
-// auto-generated barrel
+export * from "./patch-console";
+export * from "./restore-console";

@@ -12,6 +12,7 @@
 
 export type HeimdallDebugConfig = {
   ws?: boolean;
+  console?: boolean;
   network?: boolean;
 };
 
