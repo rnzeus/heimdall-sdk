@@ -1,5 +1,6 @@
 import type { NetworkFilters } from "../../types";
 import { isCloudHost } from "../cloud/state";
+import { isDevServerHost } from "../system";
 
 function matchList(value: string, list?: (string | RegExp)[]): boolean {
   if (!list || list.length === 0) return false;
@@ -15,6 +16,7 @@ export function shouldSkip(
   filters: NetworkFilters
 ): boolean {
   if (isCloudHost(host)) return true;
+  if (isDevServerHost(host)) return true;
 
   if (host.startsWith("localhost")) {
     if (

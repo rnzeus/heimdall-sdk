@@ -1,4 +1,5 @@
 import type { NetworkFilters } from "../../types";
+import { isDevServerHost } from "../system";
 
 function matchList(value: string, list?: (string | RegExp)[]): boolean {
   if (!list || list.length === 0) return false;
@@ -13,6 +14,9 @@ export function shouldSkipWs(
   path: string,
   filters: NetworkFilters
 ): boolean {
+  // Metro HMR / debugger sockets
+  if (isDevServerHost(host)) return true;
+
   // ignoreUrls
   if (matchList(url, filters.ignoreUrls) || matchList(path, filters.ignoreUrls)) {
     return true;
