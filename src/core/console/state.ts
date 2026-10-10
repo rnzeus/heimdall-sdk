@@ -11,6 +11,7 @@ type ConsoleState = {
   windowStart: number;
   windowCount: number;
   dropped: number;
+  lastUncaught: { message: string; ts: number } | null;
 };
 
 const state: ConsoleState = {
@@ -22,6 +23,7 @@ const state: ConsoleState = {
   windowStart: 0,
   windowCount: 0,
   dropped: 0,
+  lastUncaught: null,
 };
 
 export function getConsoleState(): ConsoleState {
@@ -37,4 +39,5 @@ export function resetConsoleState() {
   state.windowStart = 0;
   state.windowCount = 0;
   state.dropped = 0;
+  state.lastUncaught = null;
 }
