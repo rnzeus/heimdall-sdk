@@ -76,3 +76,50 @@ export function runWebSocketScenario(log: Log) {
   socket.onerror = () => log('WS: error');
   socket.onclose = event => log(`WS: close ${event.code}`);
 }
+
+export const CONSOLE_SCENARIOS: { title: string; run: (log: Log) => void }[] = [
+  {
+    title: 'console.log object',
+    run: log => {
+      console.log('cart loaded', { items: [{ id: 1, qty: 2 }], total: 42, user: { id: 'u1' } });
+      log('console.log sent');
+    },
+  },
+  {
+    title: 'console.warn',
+    run: log => {
+      console.warn('Deprecated prop "foo" used in Checkout');
+      log('console.warn sent');
+    },
+  },
+  {
+    title: 'console.error Error',
+    run: log => {
+      console.error('Payment failed', new Error('Card declined'));
+      log('console.error sent');
+    },
+  },
+  {
+    title: 'Burst ×300',
+    run: log => {
+      for (let i = 0; i < 300; i++) console.log(`burst ${i}`);
+      log('300 console.log sent');
+    },
+  },
+  {
+    title: 'Unhandled rejection',
+    run: log => {
+      Promise.reject(new Error('Example rejection'));
+      log('rejected a promise');
+    },
+  },
+  {
+    title: 'Uncaught error',
+    run: log => {
+      log('throwing in a timer');
+      setTimeout(() => {
+        throw new Error('Example uncaught error');
+      }, 0);
+    },
+  },
+];

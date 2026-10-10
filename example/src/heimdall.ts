@@ -14,5 +14,6 @@ export function setupHeimdall() {
     captureEarlyEvents: true,
     keepAlive: true,
     cloud: { url: CLOUD_URL },
+    app: { version: '1.0.0', build: '1', environment: 'example' },
   });
 }

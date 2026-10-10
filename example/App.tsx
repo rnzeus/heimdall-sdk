@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
 
-import { NETWORK_SCENARIOS, runWebSocketScenario } from './src/scenarios';
+import { CONSOLE_SCENARIOS, NETWORK_SCENARIOS, runWebSocketScenario } from './src/scenarios';
 import { getLateCounterStore, useEarlyCounterStore } from './src/stores';
 
 const MAX_LOG_LINES = 30;
@@ -49,6 +49,12 @@ function App() {
 
           <Section title="Network">
             {NETWORK_SCENARIOS.map(scenario => (
+              <Button key={scenario.title} title={scenario.title} onPress={() => scenario.run(log)} />
+            ))}
+          </Section>
+
+          <Section title="Console">
+            {CONSOLE_SCENARIOS.map(scenario => (
               <Button key={scenario.title} title={scenario.title} onPress={() => scenario.run(log)} />
             ))}
           </Section>
