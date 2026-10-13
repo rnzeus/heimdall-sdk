@@ -1,6 +1,6 @@
 # Heimdall SDK — example app
 
-Minimal React Native app to exercise `@rnzeus/heimdall-sdk` against the Heimdall macOS host — on a simulator or a real device signed with a personal team.
+Minimal React Native app to exercise `@rnzeus/heimdall-sdk` against the Heimdall desktop app — on a simulator, an emulator or a real device.
 
 The SDK is consumed **from source** (`../src`) via Metro (`metro.config.js`) and TypeScript `paths` (`tsconfig.json`): edit the SDK, reload the app — no build step. `react`, `react-native` and native peers always come from `example/node_modules`.
 
@@ -14,14 +14,16 @@ yarn start
 yarn ios         # or: yarn android
 ```
 
-1. Start Heimdall on your Mac and press Start (port `35678`).
-2. In the app tap **Connect prompt** and connect. Defaults: `127.0.0.1` (iOS simulator), `10.0.2.2` (Android emulator). On a real device use your Mac's LAN IP.
+1. Open Heimdall on your computer and press Start (port `35678`).
+2. In the app tap **Connect prompt** and connect. Defaults: `127.0.0.1` (iOS simulator), `10.0.2.2` (Android emulator). On a real device use the LAN IP of the computer running Heimdall.
 
 ## Scenarios
 
-- **Network** — GET/POST, 404/500, slow response, large body, unreachable host
-- **WebSocket** — echo server: open → send JSON + text → receive → close
-- **Zustand** — `early-counter` is created at import time *before* `configureConnectPrompt` (typical consumer order); `late-counter` is created lazily after it
+- **Connection** — connect prompt, disconnect
+- **Network** — all HTTP methods, JSON / form / multipart bodies, GraphQL, auth headers, redirects, 204 / 401 / 404 / 500, HTML / XML / image responses, slow and large responses, abort, XHR timeout, 20 parallel requests, the same request five times, unreachable host; **Run all** runs them in order
+- **Console** — every level, long message, circular object, burst of 300 logs, unhandled rejection, uncaught error, render error caught by an error boundary
+- **WebSocket** — one-shot echo; a live socket you open, send JSON or binary to and close by hand; three sockets at once; unreachable host
+- **Zustand** — `early-counter` is created at import time *before* `configureConnectPrompt` (typical consumer order), `late-counter` lazily after it; `cart` has nested state, `todo` an async action with loading / success / error, `stress` does 100 updates in a row and holds 2000 rows
 
 ## Real device (iOS)
 

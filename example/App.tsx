@@ -1,11 +1,11 @@
-import { HeimdallConnectPrompt, showSDKConnectPrompt } from '@rnzeus/heimdall-sdk';
-import { useCallback, useState } from 'react';
+import { HeimdallConnectPrompt, disconnect, showSDKConnectPrompt } from '@rnzeus/heimdall-sdk';
+import { Component, useCallback, useState } from 'react';
 import { Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
 
-import { CONSOLE_SCENARIOS, NETWORK_SCENARIOS, runWebSocketScenario } from './src/scenarios';
-import { getLateCounterStore, useEarlyCounterStore } from './src/stores';
+import { CONSOLE_SCENARIOS, NETWORK_SCENARIOS, WEBSOCKET_SCENARIOS, runAllNetworkScenarios } from './src/scenarios';
+import { getLateCounterStore, useCartStore, useEarlyCounterStore, useStressStore, useTodoStore } from './src/stores';
 
 const MAX_LOG_LINES = 30;
 
@@ -26,8 +26,37 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
+function RenderBomb({ armed }: { armed: boolean }) {
+  if (armed) throw new Error('Example render error');
+  return null;
+}
+
+class RenderErrorBoundary extends Component<
+  { children: React.ReactNode; onReset: () => void },
+  { message: string | null }
+> {
+  state = { message: null as string | null };
+
+  static getDerivedStateFromError(error: Error) {
+    return { message: error.message };
+  }
+
+  reset = () => {
+    this.props.onReset();
+    this.setState({ message: null });
+  };
+
+  render() {
+    if (this.state.message) {
+      return <Button title={`Caught: ${this.state.message} · reset`} onPress={this.reset} />;
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   const [lines, setLines] = useState<{ id: number; text: string }[]>([]);
+  const [renderBombArmed, setRenderBombArmed] = useState(false);
   const log = useCallback((line: string) => {
     const text = `${new Date().toLocaleTimeString()}  ${line}`;
     setLines(prev => [{ id: (prev[0]?.id ?? 0) + 1, text }, ...prev].slice(0, MAX_LOG_LINES));
@@ -35,6 +64,9 @@ function App() {
 
   const early = useEarlyCounterStore();
   const late = useStore(getLateCounterStore());
+  const cart = useCartStore();
+  const todo = useTodoStore();
+  const stress = useStressStore();
 
   return (
     <SafeAreaProvider>
@@ -45,9 +77,17 @@ function App() {
 
           <Section title="Connection">
             <Button title="Connect prompt" onPress={showSDKConnectPrompt} />
+            <Button
+              title="Disconnect"
+              onPress={() => {
+                disconnect();
+                log('disconnect called');
+              }}
+            />
           </Section>
 
           <Section title="Network">
+            <Button title="Run all" onPress={() => runAllNetworkScenarios(log)} />
             {NETWORK_SCENARIOS.map(scenario => (
               <Button key={scenario.title} title={scenario.title} onPress={() => scenario.run(log)} />
             ))}
@@ -57,10 +97,16 @@ function App() {
             {CONSOLE_SCENARIOS.map(scenario => (
               <Button key={scenario.title} title={scenario.title} onPress={() => scenario.run(log)} />
             ))}
+            <RenderErrorBoundary onReset={() => setRenderBombArmed(false)}>
+              <Button title="Render error" onPress={() => setRenderBombArmed(true)} />
+              <RenderBomb armed={renderBombArmed} />
+            </RenderErrorBoundary>
           </Section>
 
           <Section title="WebSocket">
-            <Button title="Echo open → send → close" onPress={() => runWebSocketScenario(log)} />
+            {WEBSOCKET_SCENARIOS.map(scenario => (
+              <Button key={scenario.title} title={scenario.title} onPress={() => scenario.run(log)} />
+            ))}
           </Section>
 
           <Section title={`Zustand · early ${early.count} · late ${late.count}`}>
@@ -68,6 +114,26 @@ function App() {
             <Button title="early reset" onPress={early.reset} />
             <Button title="late +1" onPress={late.increment} />
             <Button title="late reset" onPress={late.reset} />
+          </Section>
+
+          <Section
+            title={`Zustand cart · ${cart.totals.count} items · ${cart.totals.sum.toFixed(2)}${cart.coupon ? ` · ${cart.coupon}` : ''}`}
+          >
+            <Button title="add item" onPress={cart.add} />
+            <Button title="remove last" onPress={cart.removeLast} />
+            <Button title="toggle coupon" onPress={cart.toggleCoupon} />
+            <Button title="clear" onPress={cart.clear} />
+          </Section>
+
+          <Section title={`Zustand async · ${todo.status}`}>
+            <Button title="load" onPress={todo.load} />
+            <Button title="load failing" onPress={todo.loadFailing} />
+          </Section>
+
+          <Section title={`Zustand stress · tick ${stress.tick} · rows ${stress.rows.length}`}>
+            <Button title="100 updates" onPress={stress.burst} />
+            <Button title="fill 2000 rows" onPress={stress.fill} />
+            <Button title="reset" onPress={stress.reset} />
           </Section>
 
           <View style={styles.log}>
