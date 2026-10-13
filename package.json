@@ -1,6 +1,30 @@
 {
   "name": "@rnzeus/heimdall-sdk",
   "version": "0.2.1",
+  "description": "React Native client for Heimdall — a desktop debug inspector for network, WebSocket, Zustand and console",
+  "license": "MIT",
+  "author": "Volodymyr Dudkevych",
+  "homepage": "https://heimdall.rnzeus.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rnzeus/heimdall-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rnzeus/heimdall-sdk/issues"
+  },
+  "keywords": [
+    "react-native",
+    "debugging",
+    "devtools",
+    "inspector",
+    "network",
+    "websocket",
+    "zustand",
+    "heimdall"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "sideEffects": false,
   "files": [
@@ -28,7 +52,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "node scripts/write-version.mjs && yarn clean && tsc -p tsconfig.build.json && node scripts/fix-esm-extensions.mjs dist && node scripts/minify-dist.mjs dist",
+    "build": "node scripts/write-version.mjs && yarn clean && tsc -p tsconfig.build.json && node scripts/fix-esm-extensions.mjs dist",
     "dev": "tsc -p tsconfig.build.json -w",
     "typecheck": "node scripts/write-version.mjs && tsc -p tsconfig.json --noEmit"
   },
@@ -50,7 +74,6 @@
   "devDependencies": {
     "@types/node": "^25.0.3",
     "@types/react": "^18.3.12",
-    "esbuild": "^0.25.0",
     "react": "^18.3.1",
     "react-native": "^0.79.0",
     "react-native-mmkv": "^3.3.0",
