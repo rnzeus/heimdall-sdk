@@ -25,6 +25,4 @@ jobs:
       - run: yarn install --immutable
       - run: yarn typecheck
       - run: yarn build
-      - run: npm publish --provenance --access public --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: npm stage publish --access public --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}
