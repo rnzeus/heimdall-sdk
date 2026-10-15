@@ -1,9 +1,8 @@
 name: publish
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -20,11 +19,12 @@ jobs:
           node-version: 22.14.0
           registry-url: https://registry.npmjs.org
           cache: yarn
+      - run: npm install -g npm@11
       - name: Check that the tag matches the package version
         run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
       - run: yarn install --immutable
       - run: yarn typecheck
       - run: yarn build
-      - run: npm publish --provenance --access public
+      - run: npm publish --provenance --access public --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
