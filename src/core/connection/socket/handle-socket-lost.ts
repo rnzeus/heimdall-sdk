@@ -7,6 +7,7 @@ export function handleSocketLost() {
 
   if (socket) {
     try {
+      // first remove listeners, then gracefully close, then hard close
       socket.removeAllListeners?.();
       socket.end?.();
       socket.destroy();

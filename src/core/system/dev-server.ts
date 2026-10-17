@@ -25,7 +25,7 @@ const readScriptUrl = (): unknown => {
  * host:port of the Metro server the bundle was loaded from (e.g. "127.0.0.1:8081"),
  * or null for an embedded release bundle. Traffic to it is RN tooling, never app traffic.
  */
-export function getDevServerHost(): string | null {
+function getDevServerHost(): string | null {
   if (cachedHost === undefined) cachedHost = hostOf(readScriptUrl());
   return cachedHost;
 }

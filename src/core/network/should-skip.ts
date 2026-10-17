@@ -1,13 +1,7 @@
 import type { NetworkFilters } from "../../types";
 import { isCloudHost } from "../cloud/state";
 import { isDevServerHost } from "../system";
-
-function matchList(value: string, list?: (string | RegExp)[]): boolean {
-  if (!list || list.length === 0) return false;
-  return list.some((rule) =>
-    typeof rule === "string" ? value === rule : rule.test(value)
-  );
-}
+import { isExcludedByFilters } from "../../utils";
 
 export function shouldSkip(
   url: string,
@@ -28,18 +22,5 @@ export function shouldSkip(
     }
   }
 
-  if (
-    matchList(url, filters.ignoreUrls) ||
-    matchList(path, filters.ignoreUrls)
-  ) {
-    return true;
-  }
-
-  if (filters.allowedHosts && filters.allowedHosts.length > 0) {
-    if (!matchList(host, filters.allowedHosts)) {
-      return true;
-    }
-  }
-
-  return false;
+  return isExcludedByFilters(url, host, path, filters);
 }

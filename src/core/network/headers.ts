@@ -12,7 +12,7 @@ export function normaliseHeaderName(name: any): string | null {
   return n;
 }
 
-export function normaliseHeaders(input: any): HeadersMap {
+function normaliseHeaders(input: any): HeadersMap {
   const out: HeadersMap = {};
   if (!input || typeof input !== "object") return out;
 
@@ -29,7 +29,7 @@ export function normaliseHeaders(input: any): HeadersMap {
 }
 
 /** Parses the raw "name: value\r\n" block returned by getAllResponseHeaders(). */
-export function parseRawHeaders(raw: string): HeadersMap {
+function parseRawHeaders(raw: string): HeadersMap {
   const out: HeadersMap = {};
   for (const line of raw.split(/\r?\n/)) {
     const index = line.indexOf(":");

@@ -3,7 +3,7 @@ import type { JSX } from "react";
 
 import type { PromptTheme } from "../theme";
 
-export type HeaderStatus = "idle" | "busy" | "connected" | "error";
+type HeaderStatus = "idle" | "busy" | "connected" | "error";
 
 type Props = { title: string; status: HeaderStatus; theme: PromptTheme };
 

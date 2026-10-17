@@ -9,7 +9,7 @@ const clip = (value: string) =>
  * Converts any value into a JSON-safe snapshot with depth, width and string limits.
  * Never throws: getters that throw and host objects become placeholders.
  */
-export function toSafeValue(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
+function toSafeValue(value: unknown, depth = 0, seen = new WeakSet<object>()): unknown {
   if (value === null || value === undefined) return value ?? null;
   const kind = typeof value;
   if (kind === "string") return clip(value as string);

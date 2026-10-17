@@ -6,7 +6,7 @@ const MAX_BODY_BYTES_TEXT = 200 * 1024; // 200 KB
 // Safety gate: avoid JSON.parse+stringify for very large strings.
 const MAX_JSON_MINIFY_BYTES = 1_000_000; // 1 MB
 
-export const NETWORK = {
+const NETWORK = {
   MAX_BODY_BYTES_DEFAULT,
   MAX_BODY_BYTES_JSON,
   MAX_BODY_BYTES_TEXT,

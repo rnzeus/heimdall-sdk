@@ -1,16 +1,12 @@
 import { CHANNEL_SCHEME, type Channel } from "./types";
 import { sanitizeChannelSlug } from "./sanitize";
+import { generateRandomId } from "../../../utils";
 
 /**
  * Generate a random short ID (default length = 6).
  */
-export function generateShortId(length = 6): string {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let out = "";
-  for (let i = 0; i < length; i++) {
-    out += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return out;
+function generateShortId(length = 6): string {
+  return generateRandomId(length, "abcdefghijklmnopqrstuvwxyz0123456789");
 }
 
 /**

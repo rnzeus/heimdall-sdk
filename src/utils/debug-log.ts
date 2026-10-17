@@ -10,7 +10,7 @@
  * ```
  */
 
-export type HeimdallDebugConfig = {
+type HeimdallDebugConfig = {
   ws?: boolean;
   console?: boolean;
   network?: boolean;

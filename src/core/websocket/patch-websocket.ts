@@ -105,8 +105,41 @@ function buildWsFrame(
   };
 }
 
-function sendWsEvent(payload: WsEventPayload) {
-  sendEvent(payload);
+type WsEventFields = Omit<
+  WsEventPayload,
+  "id" | "type" | "transport" | "connectionId" | "ts" | "url"
+>;
+
+function sendWsEvent(meta: WsMeta, fields: WsEventFields) {
+  sendEvent({
+    id: generateRandomId(),
+    type: "ws",
+    transport: "websocket",
+    connectionId: meta.connectionId,
+    ts: now(),
+    url: meta.url,
+    ...fields,
+  });
+}
+
+function sendWsFrame(meta: WsMeta, direction: "in" | "out", data: any) {
+  const frame = buildWsFrame(meta, direction, data);
+  const raw = typeof data === "string" ? previewString(data) : typeof data;
+  debugLog(
+    "ws",
+    `frame(${direction}) connectionId=${meta.connectionId} bytes=${String(
+      frame.dataSize ?? frame.dataSnippetBytes ?? "?"
+    )} truncated=${String(frame.dataTruncated)} ct=${String(
+      frame.dataContentType
+    )} data=${String(raw)}`
+  );
+  debugLog(
+    "ws",
+    `sendEvent: frame(${direction}) connectionId=${
+      meta.connectionId
+    } bytes=${String(frame.dataSize ?? frame.dataSnippetBytes)}`
+  );
+  sendWsEvent(meta, { kind: "frame", ...frame });
 }
 
 export function patchWebSocket(options?: NetworkFilters) {
@@ -187,15 +220,7 @@ export function patchWebSocket(options?: NetworkFilters) {
         "ws",
         `sendEvent: open connectionId=${meta.connectionId} url=${meta.url}`
       );
-      sendWsEvent({
-        id: generateRandomId(),
-        type: "ws",
-        transport: "websocket",
-        connectionId: meta.connectionId,
-        ts: now(),
-        url: meta.url,
-        kind: "open",
-      });
+      sendWsEvent(meta, { kind: "open" });
     });
 
     // close
@@ -212,13 +237,7 @@ export function patchWebSocket(options?: NetworkFilters) {
           ev?.code
         )}`
       );
-      sendWsEvent({
-        id: generateRandomId(),
-        type: "ws",
-        transport: "websocket",
-        connectionId: meta.connectionId,
-        ts: now(),
-        url: meta.url,
+      sendWsEvent(meta, {
         kind: "close",
         code: typeof ev?.code === "number" ? ev.code : undefined,
         reason: typeof ev?.reason === "string" ? ev.reason : undefined,
@@ -237,47 +256,12 @@ export function patchWebSocket(options?: NetworkFilters) {
         "ws",
         `sendEvent: error connectionId=${meta.connectionId} msg=${msg}`
       );
-      sendWsEvent({
-        id: generateRandomId(),
-        type: "ws",
-        transport: "websocket",
-        connectionId: meta.connectionId,
-        ts: now(),
-        url: meta.url,
-        kind: "error",
-        error: msg,
-      });
+      sendWsEvent(meta, { kind: "error", error: msg });
     });
 
     // incoming frame
     attach("message", (ev: any) => {
-      const frame = buildWsFrame(meta, "in", ev?.data);
-      const raw =
-        typeof ev?.data === "string" ? previewString(ev.data) : typeof ev?.data;
-      debugLog(
-        "ws",
-        `frame(in) connectionId=${meta.connectionId} bytes=${String(
-          frame.dataSize ?? frame.dataSnippetBytes ?? "?"
-        )} truncated=${String(frame.dataTruncated)} ct=${String(
-          frame.dataContentType
-        )} data=${String(raw)}`
-      );
-      debugLog(
-        "ws",
-        `sendEvent: frame(in) connectionId=${meta.connectionId} bytes=${String(
-          frame.dataSize ?? frame.dataSnippetBytes
-        )}`
-      );
-      sendWsEvent({
-        id: generateRandomId(),
-        type: "ws",
-        transport: "websocket",
-        connectionId: meta.connectionId,
-        ts: now(),
-        url: meta.url,
-        kind: "frame",
-        ...frame,
-      });
+      sendWsFrame(meta, "in", ev?.data);
     });
 
     // outgoing frame
@@ -285,35 +269,7 @@ export function patchWebSocket(options?: NetworkFilters) {
     if (typeof originalSend === "function") {
       (ws as any).send = function patchedSend(data: any) {
         const m = wsMeta.get(ws);
-        if (m) {
-          const frame = buildWsFrame(m, "out", data);
-          const raw =
-            typeof data === "string" ? previewString(data) : typeof data;
-          debugLog(
-            "ws",
-            `frame(out) connectionId=${m.connectionId} bytes=${String(
-              frame.dataSize ?? frame.dataSnippetBytes ?? "?"
-            )} truncated=${String(frame.dataTruncated)} ct=${String(
-              frame.dataContentType
-            )} data=${String(raw)}`
-          );
-          debugLog(
-            "ws",
-            `sendEvent: frame(out) connectionId=${
-              m.connectionId
-            } bytes=${String(frame.dataSize ?? frame.dataSnippetBytes)}`
-          );
-          sendWsEvent({
-            id: generateRandomId(),
-            type: "ws",
-            transport: "websocket",
-            connectionId: m.connectionId,
-            ts: now(),
-            url: m.url,
-            kind: "frame",
-            ...frame,
-          });
-        }
+        if (m) sendWsFrame(m, "out", data);
         return originalSend.call(ws, data);
       };
     }
