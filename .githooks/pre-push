@@ -1,0 +1,2 @@
+#!/bin/sh
+yarn typecheck && yarn knip && yarn dupes

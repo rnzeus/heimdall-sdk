@@ -24,5 +24,7 @@ jobs:
         run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
       - run: yarn install --immutable
       - run: yarn typecheck
+      - run: yarn knip
+      - run: yarn dupes
       - run: yarn build
       - run: npm stage publish --access public --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}

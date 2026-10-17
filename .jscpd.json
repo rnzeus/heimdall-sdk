@@ -1,0 +1,11 @@
+{
+  "path": ["src", "scripts"],
+  "format": ["typescript", "tsx", "javascript"],
+  "minTokens": 40,
+  "minLines": 3,
+  "mode": "mild",
+  "ignore": ["**/*.test.ts", "**/*.test.tsx", "**/*.d.ts"],
+  "reporters": ["console"],
+  "noTips": true,
+  "threshold": 0
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["src/index.ts", "src/zustand/index.ts", "scripts/*.mjs"],
+  "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs"],
+  "ignore": [
+    "src/core/mmkv/index.ts",
+    "src/core/react-query/index.ts",
+    "src/core/zustand/index.ts",
+    "src/public/index.ts"
+  ],
+  "ignoreIssues": {
+    "src/core/connection/channel/parse.ts": ["exports"],
+    "src/core/connection/lifecycle/destroy.ts": ["exports"],
+    "src/core/connection/resolver/manual.ts": ["exports"],
+    "src/core/connection/session/client-id.ts": ["exports"],
+    "src/core/connection/session/state.ts": ["exports"]
+  }
+}
