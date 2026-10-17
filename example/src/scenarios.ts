@@ -24,17 +24,17 @@ const requestMany = async ({ label, urls, log }: { label: string; urls: string[]
   log(`${label}: ${urls.length - failed}/${urls.length} ok in ${Date.now() - startedAt}ms`);
 };
 
-const xhrTimeout = ({ label, log }: { label: string; log: Log }) =>
+const xhrWithTimeout = ({ label, url, timeoutMs, log }: { label: string; url: string; timeoutMs: number; log: Log }) =>
   new Promise<void>(resolve => {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `${HTTPBIN}/delay/5`);
-    xhr.timeout = 1000;
+    xhr.open('GET', url);
+    xhr.timeout = timeoutMs;
     xhr.onload = () => {
       log(`${label}: ${xhr.status}`);
       resolve();
     };
     xhr.ontimeout = () => {
-      log(`${label}: timed out after 1s`);
+      log(`${label}: timed out after ${timeoutMs}ms`);
       resolve();
     };
     xhr.onerror = () => {
@@ -180,7 +180,14 @@ export const NETWORK_SCENARIOS: { title: string; run: (log: Log) => Promise<void
       });
     },
   },
-  { title: 'XHR timeout 1s', run: log => xhrTimeout({ label: 'XHR timeout 1s', log }) },
+  {
+    title: 'XHR timeout 1s',
+    run: log => xhrWithTimeout({ label: 'XHR timeout 1s', url: `${HTTPBIN}/delay/5`, timeoutMs: 1000, log }),
+  },
+  {
+    title: 'XHR 200, timeout set',
+    run: log => xhrWithTimeout({ label: 'XHR 200, timeout set', url: `${JSON_API}/todos/1`, timeoutMs: 10000, log }),
+  },
   {
     title: 'Parallel ×20',
     run: log =>

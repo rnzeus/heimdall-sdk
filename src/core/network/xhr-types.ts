@@ -5,6 +5,9 @@ export type HeadersMap = Record<string, string>;
 export type XHR = {
   _index: number;
   responseHeaders?: HeadersMap;
+  /** React Native XMLHttpRequest internals; still set when the interceptor reports DONE. */
+  _aborted?: boolean;
+  _timedOut?: boolean;
 };
 
 export type Meta = {

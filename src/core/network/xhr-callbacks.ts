@@ -10,6 +10,7 @@ import {
 import { buildBodySnippet, debugLog } from "../../utils";
 import { nextXhrIndex } from "./xhr-runtime-state";
 import { readRNBlobAsText } from "./rn-blob";
+import { xhrError } from "./xhr-error";
 
 export function createXhrCallbacks(deps: {
   requests: Map<number, Meta>;
@@ -89,7 +90,7 @@ export function createXhrCallbacks(deps: {
 
   const responseCallback = (
     status: number,
-    timeout: number,
+    _timeout: number,
     response: any,
     responseURL: string,
     responseType: string,
@@ -152,7 +153,7 @@ export function createXhrCallbacks(deps: {
       status: typeof status === "number" ? status : undefined,
       ok,
       durationMs: tsEnd - (meta.tsStart || tsEnd),
-      error: timeout ? "xhr_timeout" : ok ? undefined : "xhr_error",
+      error: xhrError(xhr, ok),
       requestHeaders: meta.requestHeaders,
       responseHeaders,
       requestContentType: meta.requestHeaders["content-type"],
