@@ -1,5 +1,5 @@
 {
-  "path": ["src", "scripts"],
+  "path": ["src", "scripts", "metro"],
   "format": ["typescript", "tsx", "javascript"],
   "minTokens": 40,
   "minLines": 3,

@@ -1,5 +1,6 @@
 const path = require('path');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const { withHeimdall } = require('../metro/index.cjs');
 
 const sdkRoot = path.resolve(__dirname, '..');
 const exampleEntry = path.join(__dirname, 'index.js');
@@ -45,4 +46,6 @@ const config = {
   },
 };
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+module.exports = withHeimdall(mergeConfig(getDefaultConfig(__dirname), config), {
+  include: process.env.APP_ENV !== 'production',
+});

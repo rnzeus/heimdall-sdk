@@ -29,7 +29,9 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "zustand"
+    "zustand",
+    "noop",
+    "metro"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -48,11 +50,29 @@
       "import": "./zustand/index.js",
       "require": "./zustand/index.js",
       "default": "./zustand/index.js"
+    },
+    "./noop": {
+      "types": "./noop/index.d.ts",
+      "react-native": "./noop/index.js",
+      "import": "./noop/index.js",
+      "require": "./noop/index.js",
+      "default": "./noop/index.js"
+    },
+    "./noop/zustand": {
+      "types": "./noop/zustand.d.ts",
+      "react-native": "./noop/zustand.js",
+      "import": "./noop/zustand.js",
+      "require": "./noop/zustand.js",
+      "default": "./noop/zustand.js"
+    },
+    "./metro": {
+      "require": "./metro/index.cjs",
+      "default": "./metro/index.cjs"
     }
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "node scripts/write-version.mjs && yarn clean && tsc -p tsconfig.build.json && node scripts/fix-esm-extensions.mjs dist",
+    "build": "node scripts/write-version.mjs && yarn clean && tsc -p tsconfig.build.json && node scripts/fix-esm-extensions.mjs dist && node scripts/check-noop.mjs",
     "dev": "tsc -p tsconfig.build.json -w",
     "typecheck": "node scripts/write-version.mjs && tsc -p tsconfig.json --noEmit",
     "knip": "knip",

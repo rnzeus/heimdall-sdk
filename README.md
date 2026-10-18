@@ -83,7 +83,7 @@ Host to use:
 | Android emulator | `10.0.2.2` |
 | Real device | LAN IP of the machine running Heimdall |
 
-On a real iOS device the first connection triggers the Local Network permission dialog, so `NSLocalNetworkUsageDescription` must be set in `Info.plist`.
+On a real iOS device the first connection triggers the Local Network permission dialog. `NSLocalNetworkUsageDescription` in `Info.plist` sets the text of that dialog; it is optional — without it iOS shows a generic message.
 
 ## Zustand
 
@@ -175,6 +175,49 @@ The cloud only stores accounts, devices and the current address of the desktop. 
 - When disabled there are no patches, no sockets and no subscriptions.
 - Patches are transparent: original behaviour and return values are preserved, and SDK errors never reach your app.
 - Payloads are capped: JSON bodies at 500 KB, text at 200 KB, everything else at 50 KB, console messages at 8 KB.
+- `enabled: false` turns the SDK off, but its code and native modules stay in the build. To remove them, see below.
+
+## Removing the SDK from production builds
+
+This is optional: without it the SDK works as described above. With `enabled: false` the SDK is off, but its code and `react-native-tcp-socket` are still in the build. To leave them out of production builds:
+
+**1. Replace the SDK with no-ops in `metro.config.js`:**
+
+```js
+const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
+const { withHeimdall } = require("@rnzeus/heimdall-sdk/metro");
+
+const config = mergeConfig(getDefaultConfig(__dirname), {
+  // your config
+});
+
+module.exports = withHeimdall(config, {
+  include: process.env.APP_ENV !== "production",
+});
+```
+
+- `include: false` — `@rnzeus/heimdall-sdk` and `@rnzeus/heimdall-sdk/zustand` are replaced with modules that have the same API and do nothing: `connect` and the other calls are no-ops, `<HeimdallConnectPrompt />` renders nothing, `heimdallZustand` returns your store creator as is. Your code does not change.
+- `include: true` — the config is returned unchanged.
+- The `include` option has no default, so the choice is always explicit. Wrap your final config, after any other wrappers.
+- Any other runtime import of the SDK, such as `@rnzeus/heimdall-sdk/dist/...`, fails the build with an error that names the file. Type-only imports (`import type`) are fine.
+
+**2. Leave the native module out** in `react-native.config.js`:
+
+```js
+const production = process.env.APP_ENV === "production";
+
+module.exports = {
+  dependencies: production
+    ? { "react-native-tcp-socket": { platforms: { ios: null, android: null } } }
+    : {},
+};
+```
+
+Do this only together with step 1, otherwise the app crashes on the missing native module. The setting applies to the whole `pod install` run, so run `pod install` again without the variable before a dev or stage build. Leave `react-native-mmkv` alone if your app uses it for anything else.
+
+**Which variable to use.** Both files read environment variables of the build process. Use one that is set for the whole build — usually a variable of your CI job, such as the build stage. Values from `.env` files are not visible here. `APP_ENV` above is only an example.
+
+A production bundle built this way contains no `heimdall://` strings — only the no-op names, such as `heimdallZustand`. With Expo, step 1 works as is; for step 2 use your own config plugin.
 
 ## Your data
 

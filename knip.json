@@ -1,7 +1,13 @@
 {
   "$schema": "./node_modules/knip/schema.json",
-  "entry": ["src/index.ts", "src/zustand/index.ts", "scripts/*.mjs"],
-  "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs"],
+  "entry": [
+    "src/index.ts",
+    "src/zustand/index.ts",
+    "src/noop/index.ts",
+    "src/noop/zustand.ts",
+    "scripts/*.mjs"
+  ],
+  "project": ["src/**/*.{ts,tsx}", "metro/**/*.cjs", "scripts/**/*.mjs"],
   "ignore": [
     "src/core/mmkv/index.ts",
     "src/core/react-query/index.ts",
