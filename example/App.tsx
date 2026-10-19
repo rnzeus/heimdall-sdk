@@ -5,6 +5,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useStore } from 'zustand';
 
 import { CONSOLE_SCENARIOS, NETWORK_SCENARIOS, WEBSOCKET_SCENARIOS, runAllNetworkScenarios } from './src/scenarios';
+import { TlsSpike } from './src/tls-spike';
 import { getLateCounterStore, useCartStore, useEarlyCounterStore, useStressStore, useTodoStore } from './src/stores';
 
 const MAX_LOG_LINES = 30;
@@ -74,6 +75,8 @@ function App() {
       <SafeAreaView style={styles.container}>
         <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.title}>Heimdall SDK Example</Text>
+
+          <TlsSpike log={log} />
 
           <Section title="Connection">
             <Button title="Connect prompt" onPress={showSDKConnectPrompt} />
