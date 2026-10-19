@@ -26,5 +26,6 @@ jobs:
       - run: yarn typecheck
       - run: yarn knip
       - run: yarn dupes
+      - run: yarn test
       - run: yarn build
       - run: npm stage publish --access public --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}

@@ -6,8 +6,19 @@ import { createSession, setCurrentSession } from "../session";
 import type { HeimdallConnectOptions } from "../../../types";
 import { connectSocket } from "../socket";
 import { registerCloudUrl } from "../../cloud/state";
+import type { SecureTransport } from "../socket/secure-transport";
 
 export function connect(options: HeimdallConnectOptions) {
+  connectWithTransport({ options });
+}
+
+export function connectWithTransport({
+  options,
+  secure,
+}: {
+  options: HeimdallConnectOptions;
+  secure?: SecureTransport;
+}) {
   const enabled = resolveEnabled(options.enabled);
   if (!enabled) {
     setSdkEnabled(false);
@@ -17,7 +28,7 @@ export function connect(options: HeimdallConnectOptions) {
   setSdkEnabled(true);
   registerCloudUrl(options.cloud?.url);
 
-  const session = createSession(options);
+  const session = { ...createSession(options), ...(secure ? { secure } : {}) };
 
   setCurrentSession(session);
 

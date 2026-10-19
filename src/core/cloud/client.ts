@@ -19,6 +19,9 @@ export type CloudConnection = {
   port: number;
   channel: string;
   hostName: string;
+  /** host certificate, present when the host accepts TLS */
+  tls?: { cert: string; pubkey: string; fingerprint256: string };
+  token?: string;
 };
 
 async function request({

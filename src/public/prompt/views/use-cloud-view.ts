@@ -8,7 +8,7 @@ import {
   unlinkDevice,
 } from "../../../core/cloud";
 import {
-  connect,
+  connectWithTransport,
   createCloudResolver,
   getPromptState,
 } from "../../../core/connection";
@@ -81,11 +81,14 @@ const useCloudView = ({
       }
       setLastCloudTarget({ channel: target.channel, hostName: target.hostName });
       startConnecting(() =>
-        connect({
-          ...defaults,
-          host: target.host,
-          port: target.port,
-          channel: target.channel,
+        connectWithTransport({
+          options: {
+            ...defaults,
+            host: target.host,
+            port: target.port,
+            channel: target.channel,
+          },
+          secure: target.secure,
         })
       );
     } catch {

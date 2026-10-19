@@ -76,7 +76,8 @@
     "dev": "tsc -p tsconfig.build.json -w",
     "typecheck": "node scripts/write-version.mjs && tsc -p tsconfig.json --noEmit",
     "knip": "knip",
-    "dupes": "jscpd"
+    "dupes": "jscpd",
+    "test": "vitest run"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
@@ -91,7 +92,7 @@
     }
   },
   "dependencies": {
-    "@rnzeus/heimdall-protocol": "^0.2.0"
+    "@rnzeus/heimdall-protocol": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
@@ -104,6 +105,8 @@
     "react-native-tcp-socket": "^6.3.0",
     "rimraf": "^6.0.0",
     "typescript": "^5.7.2",
+    "vite": "7.3.7",
+    "vitest": "^5.0.3",
     "zustand": "^4.0.0"
   },
   "packageManager": "yarn@4.6.0",
