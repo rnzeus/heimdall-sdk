@@ -5,6 +5,7 @@ export function clearLastConnection() {
     SESSION_STORAGE.delete(SESSION.KEY_LAST_HOST);
     SESSION_STORAGE.delete(SESSION.KEY_LAST_PORT);
     SESSION_STORAGE.delete(SESSION.KEY_LAST_CHANNEL);
+    SESSION_STORAGE.delete(SESSION.KEY_LAST_SOURCE);
   } catch {
     // ignore
   }

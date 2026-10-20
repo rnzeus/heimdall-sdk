@@ -1,3 +1,5 @@
+import type { InstallDevice } from "../system";
+
 const REQUEST_TIMEOUT_MS = 10_000;
 
 export class CloudUnauthorizedError extends Error {
@@ -19,7 +21,6 @@ export type CloudConnection = {
   port: number;
   channel: string;
   hostName: string;
-  /** host certificate, present when the host accepts TLS */
   tls?: { cert: string; pubkey: string; fingerprint256: string };
   token?: string;
 };
@@ -60,16 +61,20 @@ export async function createClaim({
   baseUrl,
   appId,
   platform,
+  installId,
+  device,
 }: {
   baseUrl: string;
   appId?: string;
   platform?: string;
+  installId?: string;
+  device?: InstallDevice;
 }): Promise<CloudClaim> {
   const { status, data } = await request({
     baseUrl,
     path: "/claims",
     method: "POST",
-    body: { appId, platform },
+    body: { appId, platform, installId, device },
   });
   if (status !== 201) throw new Error(`Cloud error ${status}`);
   return data as CloudClaim;

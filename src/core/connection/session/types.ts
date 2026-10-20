@@ -9,8 +9,12 @@ export type HeimdallSession = {
   secure?: SecureTransport;
 };
 
+export type ConnectionSource = "cloud" | "manual";
+
 export type LastConnection = {
   host?: string;
   port?: number;
   channel?: string;
+  /** cloud connections are resolved again (fresh certificate and token), never replayed in plaintext */
+  source?: ConnectionSource;
 };

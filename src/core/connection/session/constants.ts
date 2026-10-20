@@ -6,6 +6,7 @@ export const SESSION = {
   KEY_LAST_HOST: "lastHost",
   KEY_LAST_PORT: "lastPort",
   KEY_LAST_CHANNEL: "lastChannel",
+  KEY_LAST_SOURCE: "lastSource",
 };
 
 type SessionStorage = {

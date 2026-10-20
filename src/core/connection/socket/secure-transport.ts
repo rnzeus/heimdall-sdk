@@ -86,7 +86,7 @@ export function rejectionMessage(reason?: HelloRejectReason): string {
     case "version":
       return "This Heimdall is too old for the SDK. Update Heimdall.";
     case "channel":
-      return "Heimdall is waiting for another device.";
+      return "Heimdall is connected to another app. Disconnect it there or in Heimdall, or use manual mode.";
     default:
       return "Heimdall refused the connection.";
   }

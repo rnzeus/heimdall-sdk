@@ -2,22 +2,29 @@ import { patchXHR } from "../../network";
 import { patchWebSocket } from "../../websocket";
 import { patchConsole } from "../../console";
 import { resolveEnabled, setSdkEnabled } from "../sdk-enabled";
-import { createSession, setCurrentSession } from "../session";
+import {
+  createSession,
+  setCurrentSession,
+  type ConnectionSource,
+} from "../session";
 import type { HeimdallConnectOptions } from "../../../types";
 import { connectSocket } from "../socket";
-import { registerCloudUrl } from "../../cloud/state";
+import { registerCloudUrl, setLastCloudTarget } from "../../cloud/state";
+import type { ConnectionTarget } from "../resolver";
 import type { SecureTransport } from "../socket/secure-transport";
 
 export function connect(options: HeimdallConnectOptions) {
   connectWithTransport({ options });
 }
 
-export function connectWithTransport({
+function connectWithTransport({
   options,
   secure,
+  source,
 }: {
   options: HeimdallConnectOptions;
   secure?: SecureTransport;
+  source?: ConnectionSource;
 }) {
   const enabled = resolveEnabled(options.enabled);
   if (!enabled) {
@@ -28,7 +35,10 @@ export function connectWithTransport({
   setSdkEnabled(true);
   registerCloudUrl(options.cloud?.url);
 
-  const session = { ...createSession(options), ...(secure ? { secure } : {}) };
+  const session = {
+    ...createSession(options, source),
+    ...(secure ? { secure } : {}),
+  };
 
   setCurrentSession(session);
 
@@ -62,4 +72,24 @@ export function connectWithTransport({
   if (options.captureConsole !== false) {
     patchConsole();
   }
+}
+
+export function connectToCloudTarget({
+  defaults,
+  target,
+}: {
+  defaults: Omit<HeimdallConnectOptions, "channel">;
+  target: ConnectionTarget;
+}) {
+  setLastCloudTarget({ channel: target.channel, hostName: target.hostName });
+  connectWithTransport({
+    options: {
+      ...defaults,
+      host: target.host,
+      port: target.port,
+      channel: target.channel,
+    },
+    secure: target.secure,
+    source: "cloud",
+  });
 }
