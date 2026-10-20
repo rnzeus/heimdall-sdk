@@ -141,10 +141,11 @@ disconnect();
 | `deviceName` | `string` | — | name shown in Heimdall |
 | `appId` | `string` | — | bundle id or any identifier |
 | `app` | `{ version?, build?, environment? }` | — | app details shown in Heimdall |
+| `device` | `{ id?, isEmulator? }` | — | details the SDK cannot read without native code, e.g. `getUniqueId()` and `isEmulator()` from `react-native-device-info`; helps the cloud tell devices and simulators apart |
 | `allowedHosts` | `(string \| RegExp)[]` | — | capture only these hosts |
 | `ignoreUrls` | `(string \| RegExp)[]` | — | skip by full URL or path |
 | `captureEarlyEvents` | `boolean` | `false` | buffer events that happen before the connection is up |
-| `keepAlive` | `boolean` | `false` | reconnect to the last channel on app start |
+| `keepAlive` | `boolean` | `false` | reconnect on app start: to the last channel, or through the cloud again if the last connection came from it |
 | `captureConsole` | `boolean` | `true` | console, uncaught errors, unhandled rejections |
 | `cloud` | `{ url: string }` | — | optional, see [Connecting without typing an address](#connecting-without-typing-an-address) |
 
@@ -168,6 +169,14 @@ With `cloud` set, the prompt gets a second mode:
 3. **Connect** in the prompt asks the cloud where that desktop is and connects to it directly.
 
 The cloud only stores accounts, devices and the current address of the desktop. Captured traffic never goes through it. Without `cloud` the prompt works in manual mode only.
+
+**Encryption.** A connection made through the cloud is encrypted with TLS. The desktop app has its own certificate, the cloud passes it to the app, and the SDK checks it before sending anything, so the app talks only to that desktop. A manual connection is not encrypted. Heimdall shows a lock in its title bar for each case. Older Heimdall versions keep working through the cloud without encryption.
+
+![Connection details in Heimdall: an encrypted connection](https://heimdall.rnzeus.dev/readme/connection.png)
+
+**One app at a time.** Through the cloud a desktop accepts one app at a time; another app gets a clear message and can connect once the first one disconnects. To inspect several devices at once, connect them manually.
+
+**Devices.** A device in the account is a phone, a tablet or a simulator; several apps (for example dev and stage builds) can be linked to it. Linking an Android app to an iPhone, or an emulator to a real device, asks for confirmation. Pass `device` (see [Options](#options)) to make the iOS simulator recognisable too.
 
 ## Production safety
 
@@ -221,8 +230,8 @@ A production bundle built this way contains no `heimdall://` strings — only th
 
 ## Your data
 
-- Events go **directly** from the app to the Heimdall desktop app over TCP on your network. Nothing is sent to us or to any third party.
-- Headers and bodies are sent **as they are**, including auth tokens. Use the SDK in dev and stage builds, and narrow the capture with `allowedHosts` / `ignoreUrls` where needed.
+- Events go **directly** from the app to the Heimdall desktop app over TCP on your network, encrypted with TLS when connected through the cloud. Nothing is sent to us or to any third party.
+- Headers and bodies are sent **as they are**, including auth tokens; a manual connection carries them unencrypted. Use the SDK in dev and stage builds, and narrow the capture with `allowedHosts` / `ignoreUrls` where needed.
 - `cloud` is optional and never sees captured traffic — see [Connecting without typing an address](#connecting-without-typing-an-address).
 
 ## Testing with Jest
