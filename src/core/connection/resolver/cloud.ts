@@ -26,6 +26,9 @@ export function createCloudResolver({
           port: connection.port,
           channel: connection.channel,
           hostName: connection.hostName,
+          ...(connection.tls && connection.token
+            ? { secure: { ...connection.tls, token: connection.token } }
+            : {}),
         };
       } catch (error) {
         if (error instanceof CloudUnauthorizedError) clearCloudDevice();

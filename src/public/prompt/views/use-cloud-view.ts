@@ -4,14 +4,15 @@ import {
   clearCloudDevice,
   linkDevice,
   loadCloudDevice,
-  setLastCloudTarget,
   unlinkDevice,
 } from "../../../core/cloud";
 import {
-  connect,
+  connectToCloudTarget,
   createCloudResolver,
+  getOrCreateClientId,
   getPromptState,
 } from "../../../core/connection";
+import { readInstallDevice } from "../../../core/system";
 
 type Phase = "idle" | "linking" | "connecting";
 
@@ -50,6 +51,8 @@ const useCloudView = ({
         baseUrl,
         appId: defaults?.appId,
         platform: defaults?.platform,
+        installId: getOrCreateClientId(),
+        device: readInstallDevice(defaults?.device),
         isCancelled: () => cancelledRef.current,
       });
       if (result.status === "linked") setDeviceName(result.deviceName);
@@ -79,15 +82,7 @@ const useCloudView = ({
         setMessage(`Start Heimdall for ${deviceName ?? "this device"} first.`);
         return;
       }
-      setLastCloudTarget({ channel: target.channel, hostName: target.hostName });
-      startConnecting(() =>
-        connect({
-          ...defaults,
-          host: target.host,
-          port: target.port,
-          channel: target.channel,
-        })
-      );
+      startConnecting(() => connectToCloudTarget({ defaults, target }));
     } catch {
       const stillLinked = loadCloudDevice();
       setDeviceName(stillLinked?.name ?? null);

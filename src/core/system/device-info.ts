@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import type { HelloAppInfo, HelloDeviceInfo } from "../../types";
+import { isAndroidEmulator } from "./emulator";
 
 const text = (value: unknown): string | undefined => {
   if (value === null || value === undefined) return undefined;
@@ -33,6 +34,36 @@ export function readDeviceInfo(): HelloDeviceInfo | undefined {
   } catch {
     return undefined;
   }
+}
+
+export type InstallDevice = {
+  os?: string;
+  osVersion?: string;
+  model?: string;
+  manufacturer?: string;
+  idiom?: string;
+  emulator?: boolean;
+  id?: string;
+};
+
+export function readInstallDevice(override?: {
+  id?: string;
+  isEmulator?: boolean;
+}): InstallDevice {
+  const base: InstallDevice = { ...readDeviceInfo() };
+  try {
+    const constants: Record<string, unknown> =
+      (Platform as any).constants ?? {};
+    if (Platform.OS === "android") base.emulator = isAndroidEmulator(constants);
+    else base.idiom = text(constants.interfaceIdiom);
+  } catch {
+    // ignore
+  }
+  if (typeof override?.isEmulator === "boolean")
+    base.emulator = override.isEmulator;
+  const id = text(override?.id);
+  if (id) base.id = id;
+  return base;
 }
 
 export function normaliseAppInfo(app: unknown): HelloAppInfo | undefined {

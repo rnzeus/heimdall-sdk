@@ -25,6 +25,11 @@ export type HeimdallConnectOptions = {
   captureConsole?: boolean;
   /** app details shown in heimdall, e.g. from react-native-device-info */
   app?: { version?: string; build?: string; environment?: string };
+  /**
+   * device details the SDK cannot read without native code, e.g. from react-native-device-info:
+   * `getUniqueId()` and `isEmulator()`; helps Heimdall cloud tell devices and simulators apart
+   */
+  device?: { id?: string; isEmulator?: boolean };
   /** heimdall-cloud service: enables "Find me" device linking in the connect prompt */
   cloud?: { url: string };
 };

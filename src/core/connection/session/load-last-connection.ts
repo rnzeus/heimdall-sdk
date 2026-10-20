@@ -9,10 +9,14 @@ export function loadLastConnection(): LastConnection | null {
       SESSION_STORAGE.getString(SESSION.KEY_LAST_CHANNEL) ?? undefined;
 
     const port = portString ? Number(portString) : undefined;
+    const source =
+      SESSION_STORAGE.getString(SESSION.KEY_LAST_SOURCE) === "cloud"
+        ? "cloud"
+        : "manual";
 
     if (!host && !port && !channel) return null;
 
-    return { host, port, channel };
+    return { host, port, channel, source };
   } catch {
     return null;
   }

@@ -1,5 +1,6 @@
 import { Linking } from "react-native";
 
+import type { InstallDevice } from "../system";
 import { createClaim, pollClaim } from "./client";
 import { saveCloudDevice } from "./storage";
 
@@ -17,14 +18,24 @@ export async function linkDevice({
   baseUrl,
   appId,
   platform,
+  installId,
+  device,
   isCancelled,
 }: {
   baseUrl: string;
   appId?: string;
   platform?: string;
+  installId?: string;
+  device?: InstallDevice;
   isCancelled: () => boolean;
 }): Promise<LinkDeviceResult> {
-  const claim = await createClaim({ baseUrl, appId, platform });
+  const claim = await createClaim({
+    baseUrl,
+    appId,
+    platform,
+    installId,
+    device,
+  });
   await Linking.openURL(claim.url);
 
   while (Date.now() < claim.expiresAt) {
