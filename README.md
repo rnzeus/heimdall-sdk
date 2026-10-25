@@ -73,7 +73,7 @@ import { showSDKConnectPrompt } from "@rnzeus/heimdall-sdk";
 showSDKConnectPrompt();
 ```
 
-**4. Connect.** Start the server in Heimdall, copy the channel it shows (`heimdall://…`) into the prompt and connect.
+**4. Connect.** The prompt shows a short code, such as `ab12cd`. Type it into the Channel field in Heimdall — or leave the field empty to accept any device on your network — start the server and connect.
 
 Host to use:
 
@@ -145,7 +145,7 @@ disconnect();
 |---|---|---|---|
 | `host` | `string` | — | where Heimdall is running |
 | `port` | `number` | — | Heimdall listens on `35678` by default |
-| `channel` | `string` | — | `heimdall://…` channel shown in Heimdall |
+| `channel` | `string` | — | `heimdall://<name>-<code>`; Heimdall accepts the device by the code |
 | `enabled` | `boolean` | `__DEV__` | set `true` explicitly to use the SDK in a stage build |
 | `platform` | `"ios" \| "android" \| "macos" \| "windows" \| "other"` | — | |
 | `deviceName` | `string` | — | name shown in Heimdall |
@@ -163,7 +163,7 @@ disconnect();
 
 ## Connecting without typing an address
 
-By default you copy the host and the channel into the prompt by hand. Heimdall Cloud removes that step for testers: a device is linked to an account once, and after that the app finds the desktop on its own.
+By default you type the host into the prompt and the code into Heimdall by hand. Heimdall Cloud removes that step for testers: a device is linked to an account once, and after that the app finds the desktop on its own.
 
 ```ts
 configureConnectPrompt({

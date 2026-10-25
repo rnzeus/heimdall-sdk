@@ -1,14 +1,12 @@
 import { useMemo } from "react";
 import type { UsePromptProps } from "./types";
 import {
+  channelFromInput,
   connect,
   disconnect,
   getPromptState,
   hidePrompt,
-  isChannel,
-  sanitizeChannelSlug,
 } from "../../core/connection";
-import { generateChannelId } from "../../core/connection";
 
 const usePrompt = (
   props: UsePromptProps & {
@@ -33,11 +31,7 @@ const usePrompt = (
     const port =
       Number.isFinite(portNum) && portNum > 0 ? portNum : defaults.port;
 
-    let channel = props.channel.trim();
-    if (!isChannel(channel)) {
-      const slug = sanitizeChannelSlug(channel || "session");
-      channel = generateChannelId(slug);
-    }
+    const channel = channelFromInput(props.channel);
 
     props.startConnecting(() => connect({ ...defaults, channel, host, port }));
   };

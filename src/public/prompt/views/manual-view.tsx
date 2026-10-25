@@ -1,6 +1,7 @@
 import { Text, TextInput, View } from "react-native";
 import type { Dispatch, JSX, SetStateAction } from "react";
 
+import { parseChannel } from "../../../core/connection";
 import { CopyButton } from "../../copy-button";
 import ActionButton from "../ui/action-button";
 import Footer from "../ui/footer";
@@ -42,6 +43,8 @@ const ManualView = ({
     },
   ];
   const labelStyle = [styles.label, { color: theme.muted }];
+  // The host matches by this code alone, so it is what people read out and type.
+  const code = parseChannel(ui.channel.trim().toLowerCase())?.shortId ?? null;
 
   return (
     <>
@@ -92,6 +95,15 @@ const ManualView = ({
           onPress={onCopyChannel}
         />
       </View>
+
+      {code ? (
+        <>
+          <Text style={labelStyle}>Code for Heimdall</Text>
+          <Text style={[styles.code, { color: theme.text }]} selectable>
+            {code}
+          </Text>
+        </>
+      ) : null}
 
       {error ? (
         <Text style={[styles.error, { color: theme.danger }]}>{error}</Text>

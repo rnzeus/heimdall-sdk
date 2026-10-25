@@ -1,3 +1,5 @@
+import { generateChannelId } from "./generate";
+import { sanitizeChannelSlug } from "./sanitize";
 import { CHANNEL_SCHEME, type Channel, type ChannelParts } from "./types";
 
 /**
@@ -27,4 +29,17 @@ export function parseChannel(value: string): ChannelParts | null {
     slug,
     shortId,
   };
+}
+
+const SLUG_AND_CODE = /^[a-z0-9-]+-[a-z0-9]{6}$/;
+
+/**
+ * Channel from what was typed in the prompt: a full `heimdall://…` channel as is, `slug-code` with the scheme
+ * added, anything else as the slug of a new channel.
+ */
+export function channelFromInput(input: string): Channel {
+  const typed = input.trim().toLowerCase();
+  if (isChannel(typed)) return typed;
+  if (SLUG_AND_CODE.test(typed)) return `${CHANNEL_SCHEME}${typed}` as Channel;
+  return generateChannelId(sanitizeChannelSlug(typed || "session"));
 }

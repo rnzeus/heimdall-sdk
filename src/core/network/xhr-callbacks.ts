@@ -1,7 +1,7 @@
 import { shouldSkip } from "./should-skip";
 import { generateRandomId, parseUrl } from "../../utils";
 import { sendEvent } from "../connection";
-import type { NetworkEventPayload, NetworkFilters } from "../../types";
+import type { NetworkEventPayload, NetworkFilters, NetworkStartEventPayload } from "../../types";
 import type { HeadersMap, Meta, XHR } from "./xhr-types";
 import {
   normaliseHeaderName,
@@ -73,6 +73,22 @@ export function createXhrCallbacks(deps: {
     const tsStart = Date.now();
     meta.tsStart = tsStart;
     meta.requestId = `${tsStart}-${Math.random().toString(16).slice(2)}`;
+
+    // Lets the host show a request that is still waiting; the completion follows with the same requestId.
+    const start: NetworkStartEventPayload = {
+      id: generateRandomId(),
+      type: "networkStart",
+      transport: "xhr",
+      requestId: meta.requestId,
+      tsStart,
+      method: meta.method,
+      url: meta.url,
+      host: meta.host,
+      path: meta.path,
+      requestHeaders: { ...meta.requestHeaders },
+      requestContentType: meta.requestHeaders["content-type"],
+    };
+    sendEvent(start);
 
     const requestContentType = meta.requestHeaders["content-type"];
     const reqBody = buildBodySnippet(data, { contentType: requestContentType });

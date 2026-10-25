@@ -4,6 +4,7 @@ export type {
   EventWirePayload,
   NetworkFilters,
   NetworkEventPayload,
+  NetworkStartEventPayload,
   ZustandEventPayload,
   WsEventPayload,
   ConsoleEventPayload,

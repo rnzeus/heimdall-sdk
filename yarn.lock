@@ -1168,12 +1168,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rnzeus/heimdall-protocol@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@rnzeus/heimdall-protocol@npm:0.3.0"
+"@rnzeus/heimdall-protocol@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@rnzeus/heimdall-protocol@npm:0.4.0"
   dependencies:
     zod: "npm:^4.1.13"
-  checksum: 10c0/05743fc62e75715caa4ce9a8032b9981670349e2505c200ecd9d525137da1821d9c72248373e7cf6c8ebc1dd4b8b41f5c4dd3d129ffd502d07a2de9a2bf92158
+  checksum: 10c0/735f188c180635938836aab224418eaf03aec3c3a88ecc866d107bd41d463d0865532ba5073baffd29d257177bea0991333d56c7ceecc357bf8c9fff48115c32
   languageName: node
   linkType: hard
 
@@ -1181,7 +1181,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@rnzeus/heimdall-sdk@workspace:."
   dependencies:
-    "@rnzeus/heimdall-protocol": "npm:^0.3.0"
+    "@rnzeus/heimdall-protocol": "npm:^0.4.0"
     "@types/node": "npm:^25.0.3"
     "@types/react": "npm:^18.3.12"
     jscpd: "npm:5.4.1"

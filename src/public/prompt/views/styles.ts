@@ -21,4 +21,11 @@ export default StyleSheet.create({
     marginTop: 4,
   },
   channel: { flexShrink: 1, fontSize: 12 },
+  code: {
+    fontFamily: Platform.select({ ios: "Menlo", default: "monospace" }),
+    fontSize: 22,
+    fontWeight: "600",
+    letterSpacing: 2,
+    marginTop: 2,
+  },
 });
