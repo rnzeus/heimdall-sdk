@@ -1,6 +1,6 @@
 {
   "name": "@rnzeus/heimdall-sdk",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "React Native client for Heimdall — a desktop debug inspector for network, WebSocket, Zustand and console",
   "license": "MIT",
   "author": "Volodymyr Dudkevych",
