@@ -117,6 +117,16 @@ Tokens, cookies and passwords can be masked on export, so the file is safe to pa
 
 Recording and playback live in the desktop app — nothing extra is needed in your code.
 
+## Bug reports
+
+When something goes wrong, a tester presses **Report** in Heimdall. They don't need to know which request broke: Heimdall takes what happened around that moment, finds failed requests, console errors and socket failures on its own, and lists the last steps before it. The report goes to the clipboard as Markdown or straight to the team's tracker (ClickUp for now) with the `.edda` file — and a HAR, if wanted — attached. Sensitive data is masked first.
+
+![Bug report: failures found automatically and the last activity](https://heimdall.rnzeus.dev/readme/report.png)
+
+A report can also start from one event — a request, a log line, a socket frame or a state change — or from a stopped recording. Pins and notes on events mark what matters and go into the report too.
+
+Trackers are connected in the desktop app (Settings → Integrations); nothing extra is needed in your code. Adapters are open source: [`@rnzeus/heimdall-trackers`](https://github.com/rnzeus/heimdall-trackers).
+
 ## Without the prompt
 
 ```ts
