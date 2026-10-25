@@ -6,7 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/cloud-url.cjs --if-missing && tsc --noEmit",
     "pods": "bundle install && cd ios && bundle exec pod install"
   },
   "dependencies": {

@@ -73,3 +73,6 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Heimdall cloud address, written by scripts/cloud-url.cjs
+src/cloud-url.generated.ts

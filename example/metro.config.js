@@ -1,6 +1,9 @@
 const path = require('path');
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const { withHeimdall } = require('../metro/index.cjs');
+const { writeCloudUrl } = require('./scripts/cloud-url.cjs');
+
+console.log(`heimdall-cloud: ${writeCloudUrl()}`);
 
 const sdkRoot = path.resolve(__dirname, '..');
 const exampleEntry = path.join(__dirname, 'index.js');

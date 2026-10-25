@@ -1,8 +1,10 @@
 import { configureConnectPrompt } from '@rnzeus/heimdall-sdk';
 import { Platform } from 'react-native';
 
+// Production heimdall-cloud, or the local one with HEIMDALL_CLOUD=local (see scripts/cloud-url.cjs)
+import { CLOUD_URL } from './cloud-url.generated';
+
 const HOST = Platform.select({ android: '10.0.2.2', default: '127.0.0.1' });
-const CLOUD_URL = 'https://heimdall.rnzeus.dev';
 
 export function setupHeimdall() {
   configureConnectPrompt({
