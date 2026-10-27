@@ -4,6 +4,7 @@ import {
   fetchConnection,
   loadCloudDevice,
 } from "../../cloud";
+import { pickReachableAddress } from "./pick-reachable-address";
 import type { ConnectionResolver } from "./types";
 
 export function createCloudResolver({
@@ -21,8 +22,12 @@ export function createCloudResolver({
           token: device.token,
         });
         if (!connection) return null;
+        const reachable = await pickReachableAddress({
+          addresses: connection.addresses,
+          port: connection.port,
+        });
         return {
-          host: connection.host,
+          host: reachable ?? connection.host,
           port: connection.port,
           channel: connection.channel,
           hostName: connection.hostName,
