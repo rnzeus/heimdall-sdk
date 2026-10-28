@@ -20,7 +20,8 @@ export function sendEvent(payload: EventWirePayload) {
   }
 
   if (!socket || !connected) {
-    // connect() was already called, but the socket is not ready — in v1 we don't buffer, just drop
+    // The handshake is still running: keep the event until the host accepts the session.
+    pushEarlyEvent(payload);
     return;
   }
 
