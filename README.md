@@ -145,12 +145,14 @@ heimdallFrames();
 ```
 
 - **When.** Capture runs only while Heimdall is connected and screen capture is on in it (Settings → Connection). A screenshot is taken at a tap, once the screen settles after it, and when a report is opened in Heimdall — not on a timer. Scrolls are not recorded.
-- **How.** Android copies the window with `PixelCopy` off the UI thread. iOS records the app's own screen with ReplayKit — it asks the tester once; without the permission iOS sends a single snapshot of the app's views when a report asks for it, where forms and video may come out blank. Capture slows down or pauses on its own when the device is busy.
+- **How.** Android copies the window with `PixelCopy` off the UI thread. iOS records the app's own screen with `ReplayKit` — it asks the tester once; without the permission iOS sends a single snapshot of the app's views when a report asks for it, where forms and video may come out blank. Capture slows down or pauses on its own when the device is busy.
 - **What is in them.** Only your app's window: other apps, notifications and the system UI are not captured. The screenshots are not masked — the mask of a report does not cover what is on the screen.
 - **The tester decides.** The connect prompt has a switch, **Record the screen for bug reports**. Off, the device sends nothing, and the choice is remembered.
 - Screenshots stay in the desktop app's memory for a few minutes and go only into the reports the tester attaches them to.
 
 Without `@rnzeus/heimdall-lens` in the app, `heimdallFrames()` does nothing and warns in development.
+
+To leave the module out of production builds, together with the SDK, see [Removing the SDK from production builds](#removing-the-sdk-from-production-builds).
 
 ## Without the prompt
 
@@ -223,7 +225,7 @@ The cloud only stores accounts, devices and the current address of the desktop. 
 
 ## Removing the SDK from production builds
 
-This is optional: without it the SDK works as described above. With `enabled: false` the SDK is off, but its code and `react-native-tcp-socket` are still in the build. To leave them out of production builds:
+This is optional: without it the SDK works as described above. With `enabled: false` the SDK is off, but its code and its native modules (`react-native-tcp-socket`, and `@rnzeus/heimdall-lens` if you added it) are still in the build. To leave them out of production builds:
 
 **1. Replace the SDK with no-ops in `metro.config.js`:**
 
@@ -240,24 +242,28 @@ module.exports = withHeimdall(config, {
 });
 ```
 
-- `include: false` — `@rnzeus/heimdall-sdk` and `@rnzeus/heimdall-sdk/zustand` are replaced with modules that have the same API and do nothing: `connect` and the other calls are no-ops, `<HeimdallConnectPrompt />` renders nothing, `heimdallZustand` returns your store creator as is. Your code does not change.
+- `include: false` — `@rnzeus/heimdall-sdk`, `@rnzeus/heimdall-sdk/zustand` and `@rnzeus/heimdall-sdk/frames` are replaced with modules that have the same API and do nothing: `connect` and the other calls are no-ops, `<HeimdallConnectPrompt />` renders nothing, `heimdallZustand` returns your store creator as is, `heimdallFrames` does nothing. Your code does not change.
 - `include: true` — the config is returned unchanged.
 - The `include` option has no default, so the choice is always explicit. Wrap your final config, after any other wrappers.
 - Any other runtime import of the SDK, such as `@rnzeus/heimdall-sdk/dist/...`, fails the build with an error that names the file. Type-only imports (`import type`) are fine.
 
-**2. Leave the native module out** in `react-native.config.js`:
+**2. Leave the native modules out** in `react-native.config.js`:
 
 ```js
 const production = process.env.APP_ENV === "production";
 
 module.exports = {
   dependencies: production
-    ? { "react-native-tcp-socket": { platforms: { ios: null, android: null } } }
+    ? {
+        "react-native-tcp-socket": { platforms: { ios: null, android: null } },
+        // only if you added it for screenshots
+        "@rnzeus/heimdall-lens": { platforms: { ios: null, android: null } },
+      }
     : {},
 };
 ```
 
-Do this only together with step 1, otherwise the app crashes on the missing native module. The setting applies to the whole `pod install` run, so run `pod install` again without the variable before a dev or stage build. Leave `react-native-mmkv` alone if your app uses it for anything else.
+Do this only together with step 1, otherwise the app crashes on the missing native modules. The setting applies to the whole `pod install` run, so run `pod install` again without the variable before a dev or stage build. Leave `react-native-mmkv` alone if your app uses it for anything else.
 
 **Which variable to use.** Both files read environment variables of the build process. Use one that is set for the whole build — usually a variable of your CI job, such as the build stage. Values from `.env` files are not visible here. `APP_ENV` above is only an example.
 
