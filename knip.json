@@ -3,8 +3,10 @@
   "entry": [
     "src/index.ts",
     "src/zustand/index.ts",
+    "src/frames/index.ts",
     "src/noop/index.ts",
     "src/noop/zustand.ts",
+    "src/noop/frames.ts",
     "scripts/*.mjs"
   ],
   "project": ["src/**/*.{ts,tsx}", "metro/**/*.cjs", "scripts/**/*.mjs"],

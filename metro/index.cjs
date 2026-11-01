@@ -5,9 +5,14 @@ const PACKAGE = "@rnzeus/heimdall-sdk";
 const NOOP_FILES = {
   [PACKAGE]: path.resolve(__dirname, "../dist/noop/index.js"),
   [`${PACKAGE}/zustand`]: path.resolve(__dirname, "../dist/noop/zustand.js"),
+  [`${PACKAGE}/frames`]: path.resolve(__dirname, "../dist/noop/frames.js"),
 };
 
-const NOOP_ENTRIES = new Set([`${PACKAGE}/noop`, `${PACKAGE}/noop/zustand`]);
+const NOOP_ENTRIES = new Set([
+  `${PACKAGE}/noop`,
+  `${PACKAGE}/noop/zustand`,
+  `${PACKAGE}/noop/frames`,
+]);
 
 const isSdkImport = (moduleName) =>
   moduleName === PACKAGE || moduleName.startsWith(`${PACKAGE}/`);
@@ -30,12 +35,13 @@ const unsupportedImportError = ({ moduleName, originModulePath }) => {
       ``,
       `  "${PACKAGE}"          -> no-op connect / disconnect / prompt`,
       `  "${PACKAGE}/zustand"  -> heimdallZustand passes the store creator through`,
+      `  "${PACKAGE}/frames"   -> heimdallFrames does nothing`,
       ``,
       `"${moduleName}" is not one of them. Letting it through would put the real SDK into this bundle,`,
       `and if react-native-tcp-socket is unlinked for this build, the app would crash at runtime.`,
       ``,
       `How to fix:`,
-      `  - import from "${PACKAGE}" or "${PACKAGE}/zustand" instead;`,
+      `  - import from "${PACKAGE}", "${PACKAGE}/zustand" or "${PACKAGE}/frames" instead;`,
       `  - type-only imports are fine anywhere: use "import type { ... }";`,
       `  - if this build should include Heimdall, pass { include: true } to withHeimdall.`,
     ].join("\n")

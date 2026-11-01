@@ -28,12 +28,13 @@ export function sendEvent(payload: EventWirePayload) {
   internalSendNetworkEvent(payload);
 }
 
-export function internalSendNetworkEvent(payload: EventWirePayload) {
+/** @returns false when the event was not handed to the socket */
+export function internalSendNetworkEvent(payload: EventWirePayload): boolean {
   const currentSession = getCurrentSession();
   const socket = getSocket();
   const connected = isConnected();
 
-  if (!socket || !connected || !currentSession) return;
+  if (!socket || !connected || !currentSession) return false;
 
   const { options, clientId, sessionId } = currentSession;
 
@@ -51,7 +52,8 @@ export function internalSendNetworkEvent(payload: EventWirePayload) {
 
   try {
     socket.write(JSON.stringify(message) + "\r\n");
+    return true;
   } catch {
-    // ignore
+    return false;
   }
 }

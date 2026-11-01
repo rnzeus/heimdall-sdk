@@ -107,11 +107,12 @@ describe("parseHostAnswer", () => {
     ];
     for (const line of lines) {
       const schema = safeParseHostWireMessageV1(JSON.parse(line));
-      const expected = schema.success
-        ? schema.data.status === "accepted"
+      const expected =
+        schema.success && schema.data.kind === "helloAck"
+          ? schema.data.status === "accepted"
           ? { accepted: true }
-          : { accepted: false, reason: schema.data.reason }
-        : null;
+            : { accepted: false, reason: schema.data.reason }
+          : null;
       expect(parseHostAnswer(line)).toEqual(expected);
     }
   });

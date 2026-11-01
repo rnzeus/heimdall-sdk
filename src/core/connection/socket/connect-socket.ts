@@ -12,6 +12,9 @@ import { handleSocketLost } from "./handle-socket-lost";
 import { flushEarlyEvents } from "./flush-early-events";
 import { normalizeSocketError } from "./normalize-socket-error";
 import { SOCKET } from "./constants";
+import { getCapabilities } from "./capabilities";
+import { handleHostLine } from "./host-message";
+import { readHostLines } from "./host-lines";
 import {
   getCurrentSession,
   setCurrentSession,
@@ -58,6 +61,8 @@ function buildHello({
   const app = normaliseAppInfo(options.app);
   if (app) hello.app = app;
   if (secure) hello.auth = { token: secure.token };
+  const capabilities = getCapabilities();
+  if (capabilities) hello.capabilities = capabilities;
   return hello;
 }
 
@@ -123,6 +128,7 @@ export function connectSocket(
   const onPlainConnect = () => {
     clearTimeout(connectTimeout);
     setConnected(true);
+    readHostLines({ socket: newSocket, onLine: handleHostLine });
     try {
       newSocket.write(
         JSON.stringify(buildHello({ session, options })) + "\r\n"
@@ -144,18 +150,19 @@ export function connectSocket(
       return;
     }
 
-    let pending = "";
+    let answered = false;
     const answerTimeout = setTimeout(() => {
       if (getSocket() === newSocket && !isConnected()) fail(NO_ANSWER);
     }, HOST_ANSWER_TIMEOUT_MS);
-    const onData = (data: unknown) => {
-      pending += typeof data === "string" ? data : String(data);
-      const end = pending.indexOf("\r\n");
-      if (end === -1) return;
-      newSocket.off?.("data", onData);
+    const onLine = (line: string) => {
+      if (answered) {
+        handleHostLine(line);
+        return;
+      }
+      answered = true;
       clearTimeout(answerTimeout);
       clearTimeout(connectTimeout);
-      const answer = parseHostAnswer(pending.slice(0, end));
+      const answer = parseHostAnswer(line);
       if (!answer) {
         fail(NO_ANSWER);
         return;
@@ -167,7 +174,7 @@ export function connectSocket(
       setConnected(true);
       flushEarlyEvents();
     };
-    newSocket.on("data", onData);
+    readHostLines({ socket: newSocket, onLine });
 
     try {
       newSocket.write(

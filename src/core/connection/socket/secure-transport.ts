@@ -1,4 +1,5 @@
 import type { HelloRejectReason } from "@rnzeus/heimdall-protocol";
+import { parseHostMessage } from "./host-message";
 
 /** Host certificate and session token from heimdall-cloud; kept in memory only. */
 export type SecureTransport = {
@@ -62,15 +63,9 @@ export type HostAnswer =
 // Hand-written on purpose: the protocol schemas would pull zod into every consumer app. Mirrors the
 // tolerant HelloAckWireMessageV1Schema: extra fields are ignored, an unknown reason becomes undefined.
 export function parseHostAnswer(line: string): HostAnswer | null {
-  let json: unknown;
-  try {
-    json = JSON.parse(line);
-  } catch {
-    return null;
-  }
-  if (!json || typeof json !== "object") return null;
-  const { kind, v, status, reason } = json as Record<string, unknown>;
-  if (kind !== "helloAck" || v !== 1) return null;
+  const message = parseHostMessage(line);
+  if (message?.kind !== "helloAck") return null;
+  const { status, reason } = message;
   if (status === "accepted") return { accepted: true };
   if (status !== "rejected") return null;
   return {

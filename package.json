@@ -30,6 +30,7 @@
   "files": [
     "dist",
     "zustand",
+    "frames",
     "noop",
     "metro"
   ],
@@ -51,6 +52,13 @@
       "require": "./zustand/index.js",
       "default": "./zustand/index.js"
     },
+    "./frames": {
+      "types": "./frames/index.d.ts",
+      "react-native": "./frames/index.js",
+      "import": "./frames/index.js",
+      "require": "./frames/index.js",
+      "default": "./frames/index.js"
+    },
     "./noop": {
       "types": "./noop/index.d.ts",
       "react-native": "./noop/index.js",
@@ -64,6 +72,13 @@
       "import": "./noop/zustand.js",
       "require": "./noop/zustand.js",
       "default": "./noop/zustand.js"
+    },
+    "./noop/frames": {
+      "types": "./noop/frames.d.ts",
+      "react-native": "./noop/frames.js",
+      "import": "./noop/frames.js",
+      "require": "./noop/frames.js",
+      "default": "./noop/frames.js"
     },
     "./metro": {
       "require": "./metro/index.cjs",
@@ -80,6 +95,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
+    "@rnzeus/heimdall-lens": ">=0.1.0",
     "react": ">=18.0.0",
     "react-native": ">=0.72.0",
     "react-native-mmkv": ">=3",
@@ -87,12 +103,15 @@
     "zustand": ">=3"
   },
   "peerDependenciesMeta": {
+    "@rnzeus/heimdall-lens": {
+      "optional": true
+    },
     "zustand": {
       "optional": true
     }
   },
   "dependencies": {
-    "@rnzeus/heimdall-protocol": "^0.4.0"
+    "@rnzeus/heimdall-protocol": "^0.6.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
