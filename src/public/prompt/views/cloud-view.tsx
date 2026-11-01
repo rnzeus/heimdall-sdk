@@ -3,6 +3,7 @@ import type { JSX } from "react";
 
 import ActionButton from "../ui/action-button";
 import Footer from "../ui/footer";
+import ScreenRecording from "../ui/screen-recording";
 import Header from "../ui/header";
 import type { PromptTheme } from "../theme";
 import useCloudView from "./use-cloud-view";
@@ -76,6 +77,7 @@ const CloudView = ({
       {error ? (
         <Text style={[styles.error, { color: theme.danger }]}>{error}</Text>
       ) : null}
+      <ScreenRecording theme={theme} />
       <Footer
         secondary={
           <>

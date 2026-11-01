@@ -5,6 +5,7 @@ import { CopyButton } from "../../copy-button";
 import ActionButton from "../ui/action-button";
 import Footer from "../ui/footer";
 import Header from "../ui/header";
+import ScreenRecording from "../ui/screen-recording";
 import type { PromptTheme } from "../theme";
 import styles from "./styles";
 
@@ -46,6 +47,7 @@ const ConnectedView = ({
         onPress={onCopyChannel}
       />
     </View>
+    <ScreenRecording theme={theme} />
     <Footer
       secondary={
         <ActionButton

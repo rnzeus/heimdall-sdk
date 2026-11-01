@@ -1,7 +1,7 @@
 import { safeParseHostWireMessageV1 } from "@rnzeus/heimdall-protocol";
 import { describe, expect, it, vi } from "vitest";
 
-import { handleHostLine, parseHostConfig, subscribeHostConfig } from "./host-message";
+import { handleHostLine, parseHostConfig, subscribeCaptureScreen, subscribeHostConfig } from "./host-message";
 
 const line = (value: unknown) => JSON.stringify(value);
 
@@ -38,5 +38,17 @@ describe("handleHostLine", () => {
     unsubscribe();
     handleHostLine(line({ kind: "hostConfig", v: 1 }));
     expect(listener.mock.calls).toEqual([[{ frames: { enabled: false, fps: undefined, maxWidth: undefined } }]]);
+  });
+});
+
+describe("captureScreen", () => {
+  it("tells subscribers the host wants the screen now", () => {
+    const listener = vi.fn();
+    const unsubscribe = subscribeCaptureScreen(listener);
+    handleHostLine(line({ kind: "captureScreen", v: 1 }));
+    handleHostLine(line({ kind: "captureScreen", v: 2 }));
+    unsubscribe();
+    handleHostLine(line({ kind: "captureScreen", v: 1 }));
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 });

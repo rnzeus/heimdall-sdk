@@ -7,6 +7,8 @@ export const SESSION = {
   KEY_LAST_PORT: "lastPort",
   KEY_LAST_CHANNEL: "lastChannel",
   KEY_LAST_SOURCE: "lastSource",
+  /** "off" when the tester turned screen recording off on this device */
+  KEY_FRAMES_RECORDING: "framesRecording",
 };
 
 type SessionStorage = {

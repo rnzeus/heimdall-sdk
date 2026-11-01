@@ -47,8 +47,23 @@ export function subscribeHostConfig(
   };
 }
 
+const captureListeners = new Set<() => void>();
+
+/** Notified when the host asks for a frame of the screen now (`captureScreen`). */
+export function subscribeCaptureScreen(listener: () => void): () => void {
+  captureListeners.add(listener);
+  return () => {
+    captureListeners.delete(listener);
+  };
+}
+
 export function handleHostLine(line: string) {
   const config = parseHostConfig(line);
-  if (!config) return;
-  for (const listener of configListeners) listener(config);
+  if (config) {
+    for (const listener of configListeners) listener(config);
+    return;
+  }
+  if (parseHostMessage(line)?.kind === "captureScreen") {
+    for (const listener of captureListeners) listener();
+  }
 }

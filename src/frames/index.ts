@@ -2,6 +2,7 @@ import {
   addFrameListener,
   addStatusListener,
   addTapListener,
+  captureFrame,
   isFramesAvailable,
   startFrames,
   stopFrames,
@@ -36,7 +37,8 @@ export function heimdallFrames(options: HeimdallFramesOptions = {}) {
       maxFps: options.maxFps ?? DEFAULT_MAX_FPS,
       maxWidth: options.maxWidth ?? DEFAULT_MAX_WIDTH,
     },
-    start: ({ fps, maxWidth }) => startFrames({ fps, maxWidth }),
+    start: ({ fps, maxWidth, allowRecording }) => startFrames({ fps, maxWidth, allowRecording }),
+    captureNow: ({ maxWidth }) => captureFrame({ maxWidth }),
     stop: () => {
       stopFrames().catch(() => {});
     },
