@@ -1,6 +1,7 @@
 import {
   addFrameListener,
   addStatusListener,
+  addTapListener,
   isFramesAvailable,
   startFrames,
   stopFrames,
@@ -39,12 +40,10 @@ export function heimdallFrames(options: HeimdallFramesOptions = {}) {
     stop: () => {
       stopFrames().catch(() => {});
     },
-    subscribe: ({ onFrame, onStatus }) => {
-      const frames = addFrameListener(onFrame);
-      const statuses = addStatusListener(onStatus);
+    subscribe: ({ onFrame, onStatus, onTap }) => {
+      const subscriptions = [addFrameListener(onFrame), addStatusListener(onStatus), addTapListener(onTap)];
       return () => {
-        frames.remove();
-        statuses.remove();
+        for (const subscription of subscriptions) subscription.remove();
       };
     },
   });

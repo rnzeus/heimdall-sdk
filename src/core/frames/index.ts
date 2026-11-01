@@ -2,6 +2,7 @@ import type {
   FramesCapability,
   FramesStatusEventPayload,
   HostConfigFrames,
+  ScreenTapEventPayload,
 } from "@rnzeus/heimdall-protocol";
 import { generateRandomId } from "../../utils";
 import {
@@ -20,6 +21,8 @@ type FramesSourceFrame = {
   ts: number;
 };
 
+type FramesSourceTap = Pick<ScreenTapEventPayload, "x" | "y" | "ts" | "kind">;
+
 type FramesSourceStatus = Pick<
   FramesStatusEventPayload,
   "state" | "reason" | "fps" | "deviceClass"
@@ -33,6 +36,7 @@ export type FramesSource = {
   subscribe: (handlers: {
     onFrame: (frame: FramesSourceFrame) => void;
     onStatus: (status: FramesSourceStatus) => void;
+    onTap: (tap: FramesSourceTap) => void;
   }) => () => void;
 };
 
@@ -66,6 +70,18 @@ function sendStatus(status: FramesSourceStatus) {
   });
 }
 
+// Taps are tiny and mark where frames were touched, so unlike frames they are never dropped.
+function sendTap(tap: FramesSourceTap) {
+  internalSendNetworkEvent({
+    type: "screenTap",
+    id: generateRandomId(),
+    ts: tap.ts,
+    x: tap.x,
+    y: tap.y,
+    kind: tap.kind,
+  });
+}
+
 function stopCapture() {
   if (!source || !running) return;
   running = null;
@@ -91,7 +107,7 @@ function applyFrames(frames: HostConfigFrames | undefined) {
   }
   stopCapture();
   running = next;
-  unsubscribeSource = source.subscribe({ onFrame: sendFrame, onStatus: sendStatus });
+  unsubscribeSource = source.subscribe({ onFrame: sendFrame, onStatus: sendStatus, onTap: sendTap });
   source.start(next);
 }
 

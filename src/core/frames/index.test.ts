@@ -30,7 +30,7 @@ vi.mock("../connection", () => ({
 import { registerFramesSource, type FramesSource } from "./index";
 
 type Handlers = Parameters<FramesSource["subscribe"]>[0];
-const handlers: Handlers = { onFrame: () => {}, onStatus: () => {} };
+const handlers: Handlers = { onFrame: () => {}, onStatus: () => {}, onTap: () => {} };
 const source = {
   capability: { maxFps: 2, maxWidth: 480 },
   start: vi.fn(),
@@ -87,5 +87,14 @@ describe("frames", () => {
     expect(connection.sent.map((event) => event.type)).toEqual(["screenFrame", "framesStatus"]);
     expect(connection.sent[0]).toMatchObject({ mime: "image/jpeg", data: "abc", width: 480, ts: 1 });
     expect(connection.sent[1]).toMatchObject({ state: "paused", reason: "slow_device", fps: 0.25 });
+  });
+
+  it("sends taps even while the socket is busy", () => {
+    connection.hostConfig?.({ frames: { enabled: true } });
+    connection.needDrain = true;
+    handlers.onTap({ x: 0.5, y: 0.25, ts: 7, kind: "longPress" });
+    expect(connection.sent).toEqual([
+      expect.objectContaining({ type: "screenTap", x: 0.5, y: 0.25, ts: 7, kind: "longPress" }),
+    ]);
   });
 });
