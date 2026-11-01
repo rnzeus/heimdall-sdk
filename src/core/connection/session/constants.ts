@@ -18,9 +18,14 @@ type SessionStorage = {
 function createSessionStorage(): SessionStorage {
   const mmkv: any = MMKVModule as any;
 
-  // react-native-mmkv v4+
+  // react-native-mmkv v4+ renamed delete to remove
   if (typeof mmkv.createMMKV === "function") {
-    return mmkv.createMMKV({ id: SESSION.STORAGE_ID }) as SessionStorage;
+    const storage = mmkv.createMMKV({ id: SESSION.STORAGE_ID });
+    return {
+      getString: (key) => storage.getString(key),
+      set: (key, value) => storage.set(key, value),
+      delete: (key) => storage.remove(key),
+    };
   }
 
   // react-native-mmkv v3
