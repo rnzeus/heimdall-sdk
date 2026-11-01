@@ -11,6 +11,7 @@ const exampleEntry = path.join(__dirname, 'index.js');
 const SDK_ALIASES = {
   '@rnzeus/heimdall-sdk': path.join(sdkRoot, 'src/index.ts'),
   '@rnzeus/heimdall-sdk/zustand': path.join(sdkRoot, 'src/zustand/index.ts'),
+  '@rnzeus/heimdall-sdk/frames': path.join(sdkRoot, 'src/frames/index.ts'),
 };
 
 // SDK is consumed from source: react and native peers must come from example/node_modules only,

@@ -10,6 +10,7 @@
     "pods": "bundle install && cd ios && bundle exec pod install"
   },
   "dependencies": {
+    "@rnzeus/heimdall-lens": "^0.1.0",
     "react": "19.2.3",
     "react-native": "0.87.1",
     "react-native-mmkv": "^4.0.0",

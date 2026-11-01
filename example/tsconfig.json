@@ -5,6 +5,7 @@
     "paths": {
       "@rnzeus/heimdall-sdk": ["../src/index.ts"],
       "@rnzeus/heimdall-sdk/zustand": ["../src/zustand/index.ts"],
+      "@rnzeus/heimdall-sdk/frames": ["../src/frames/index.ts"],
       "react": ["./node_modules/@types/react"],
       "react/*": ["./node_modules/@types/react/*"],
       "zustand": ["./node_modules/zustand"],

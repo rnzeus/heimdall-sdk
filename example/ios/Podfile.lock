@@ -12,6 +12,28 @@ PODS:
     - ReactNativeDependencies
   - glog (0.3.5):
     - ReactNativeDependencies
+  - heimdall-lens (0.1.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - hermes-engine (250829098.0.17):
     - hermes-engine/Pre-built (= 250829098.0.17)
   - hermes-engine/Pre-built (250829098.0.17)
@@ -1738,6 +1760,7 @@ DEPENDENCIES:
   - FBLazyVector (from `build/rncore-facades/FBLazyVector`)
   - fmt (from `build/rndeps-facades/fmt`)
   - glog (from `build/rndeps-facades/glog`)
+  - "heimdall-lens (from `../node_modules/@rnzeus/heimdall-lens`)"
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - NitroMmkv (from `../node_modules/react-native-mmkv`)
   - NitroModules (from `../node_modules/react-native-nitro-modules`)
@@ -1841,6 +1864,8 @@ EXTERNAL SOURCES:
     :path: build/rndeps-facades/fmt
   glog:
     :path: build/rndeps-facades/glog
+  heimdall-lens:
+    :path: "../node_modules/@rnzeus/heimdall-lens"
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-v250829098.0.17
@@ -2017,6 +2042,7 @@ SPEC CHECKSUMS:
   FBLazyVector: 1f950f55bf9d0f1130874f80ff0932945b97e2a8
   fmt: c7776a2a4b1d7ce88b809a1e4d1f7add0f2369df
   glog: b4427c3119645da795ff09985ba9da909c940c96
+  heimdall-lens: 53ea0bd76d0a7a6314d65b95370f243340da637e
   hermes-engine: 63c5db7d529c36335fada6582fd293ae2a105d77
   MMKVCore: 3d16ce9f7d411e135020915fde98a056859a1efa
   NitroMmkv: 8f0835de03e2d0e67004e33ca4550fff03cb7d54
