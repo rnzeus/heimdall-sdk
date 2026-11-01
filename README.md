@@ -7,6 +7,7 @@ React Native client for **Heimdall** — a desktop debug inspector for dev and s
 - **Zustand** — state snapshots per store, with the action that caused them
 - **Console** — `console.*`, uncaught JS errors and unhandled promise rejections
 - **App and device info** — version, build, environment, OS, model
+- **Screenshots** — optional: the screen around a bug, with the taps on it, for bug reports
 
 ![Heimdall desktop app: network inspector](https://heimdall.rnzeus.dev/readme/network.png)
 
@@ -21,6 +22,7 @@ It is built for development and stage builds only and is off by default in produ
 | `react-native-tcp-socket` | `>=6` | transport |
 | `react-native-mmkv` | `>=3` | remembers the last connection |
 | `zustand` | `>=3` | optional, only for the Zustand middleware |
+| [`@rnzeus/heimdall-lens`](https://github.com/rnzeus/heimdall-lens) | `>=0.1` | optional, only for screenshots in bug reports |
 
 `react-native-tcp-socket` and `react-native-mmkv` are native modules. With Expo you need a [development build](https://docs.expo.dev/develop/development-builds/introduction/) — Expo Go will not work.
 
@@ -126,6 +128,29 @@ When something goes wrong, a tester presses **Report** in Heimdall. They don't n
 A report can also start from one event — a request, a log line, a socket frame or a state change — or from a stopped recording. Pins and notes on events mark what matters and go into the report too.
 
 Trackers are connected in the desktop app (Settings → Integrations); nothing extra is needed in your code. Adapters are open source: [`@rnzeus/heimdall-trackers`](https://github.com/rnzeus/heimdall-trackers).
+
+## Screenshots in bug reports
+
+A report can show the screen around the bug: what the tester tapped and what they saw after it. Install the native module and turn it on once at startup:
+
+```sh
+yarn add @rnzeus/heimdall-lens
+cd ios && pod install
+```
+
+```ts
+import { heimdallFrames } from "@rnzeus/heimdall-sdk/frames";
+
+heimdallFrames();
+```
+
+- **When.** Capture runs only while Heimdall is connected and screen capture is on in it (Settings → Connection). A screenshot is taken at a tap, once the screen settles after it, and when a report is opened in Heimdall — not on a timer. Scrolls are not recorded.
+- **How.** Android copies the window with `PixelCopy` off the UI thread. iOS records the app's own screen with ReplayKit — it asks the tester once; without the permission iOS sends a single snapshot of the app's views when a report asks for it, where forms and video may come out blank. Capture slows down or pauses on its own when the device is busy.
+- **What is in them.** Only your app's window: other apps, notifications and the system UI are not captured. The screenshots are not masked — the mask of a report does not cover what is on the screen.
+- **The tester decides.** The connect prompt has a switch, **Record the screen for bug reports**. Off, the device sends nothing, and the choice is remembered.
+- Screenshots stay in the desktop app's memory for a few minutes and go only into the reports the tester attaches them to.
+
+Without `@rnzeus/heimdall-lens` in the app, `heimdallFrames()` does nothing and warns in development.
 
 ## Without the prompt
 
@@ -242,6 +267,7 @@ A production bundle built this way contains no `heimdall://` strings — only th
 
 - Events go **directly** from the app to the Heimdall desktop app over TCP on your network, encrypted with TLS when connected through the cloud. Nothing is sent to us or to any third party.
 - Headers and bodies are sent **as they are**, including auth tokens; a manual connection carries them unencrypted. Use the SDK in dev and stage builds, and narrow the capture with `allowedHosts` / `ignoreUrls` where needed.
+- Screenshots, when turned on, go the same way and are not masked; see [Screenshots in bug reports](#screenshots-in-bug-reports).
 - `cloud` is optional and never sees captured traffic — see [Connecting without typing an address](#connecting-without-typing-an-address).
 
 ## Testing with Jest
@@ -267,6 +293,16 @@ jest.mock("react-native-tcp-socket", () => ({ createConnection: jest.fn() }));
 ## Example app
 
 [`example/`](./example) is a minimal React Native app with ready-made network, WebSocket, Zustand and console scenarios.
+
+## Heimdall ecosystem
+
+| | |
+|---|---|
+| [Heimdall desktop](https://heimdall.rnzeus.dev/download) | the inspector for macOS and Windows |
+| [`@rnzeus/heimdall-sdk`](https://github.com/rnzeus/heimdall-sdk) | React Native client: network, WebSocket, state, console |
+| [`@rnzeus/heimdall-lens`](https://github.com/rnzeus/heimdall-lens) | native screenshots and taps for bug reports |
+| [`@rnzeus/heimdall-protocol`](https://github.com/rnzeus/heimdall-protocol) | messages between the SDK and the desktop app |
+| [`@rnzeus/heimdall-trackers`](https://github.com/rnzeus/heimdall-trackers) | issue tracker adapters for bug reports |
 
 ## License
 
