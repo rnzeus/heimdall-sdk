@@ -20,7 +20,8 @@ type Props = {
   canCopy: boolean;
   onCopyChannel: () => void;
   onConnect: () => void;
-  onBack?: () => void;
+  /** back to finding the Mac through Heimdall cloud: the counterpart of “Enter manually” */
+  onAuto?: () => void;
   isConnecting: boolean;
   /** a step the user takes while it connects, e.g. the iOS Local Network question */
   notice: string | null;
@@ -34,7 +35,7 @@ const ManualView = ({
   canCopy,
   onCopyChannel,
   onConnect,
-  onBack,
+  onAuto,
   isConnecting,
   notice,
 }: Props): JSX.Element => {
@@ -114,14 +115,14 @@ const ManualView = ({
 
       <ScreenRecording theme={theme} />
       <Footer
-        secondary={
-          onBack ? (
+        start={
+          onAuto ? (
             <ActionButton
-              title="Back"
+              title="Find automatically"
               variant="link"
               theme={theme}
               disabled={isConnecting}
-              onPress={onBack}
+              onPress={onAuto}
             />
           ) : null
         }

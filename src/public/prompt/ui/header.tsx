@@ -10,8 +10,8 @@ type Props = { title: string; status: HeaderStatus; theme: PromptTheme };
 const Header = ({ title, status, theme }: Props): JSX.Element => {
   const dot = {
     idle: theme.idle,
-    busy: theme.warning,
-    connected: theme.success,
+    busy: theme.link,
+    connected: theme.session,
     error: theme.danger,
   }[status];
 

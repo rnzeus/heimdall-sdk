@@ -81,29 +81,31 @@ const CloudView = ({
       <StatusLine error={error} notice={notice} theme={theme} />
       <ScreenRecording theme={theme} />
       <Footer
-        secondary={
-          <>
-            {deviceName ? (
-              <ActionButton
-                title="Unlink"
-                variant="link"
-                theme={theme}
-                disabled={isBusy}
-                onPress={onUnlink}
-              />
-            ) : null}
+        start={
+          <ActionButton
+            title="Enter manually"
+            variant="link"
+            theme={theme}
+            disabled={isBusy}
+            onPress={onManual}
+          />
+        }
+        end={
+          deviceName ? (
             <ActionButton
-              title="Enter manually"
-              variant="link"
+              title="Unlink"
+              variant="quiet"
               theme={theme}
               disabled={isBusy}
-              onPress={onManual}
+              onPress={onUnlink}
             />
-          </>
+          ) : null
         }
         primary={
           <ActionButton
-            title={isConnecting ? "Connecting…" : deviceName ? "Connect" : "Find me"}
+            title={
+              isConnecting ? "Connecting…" : deviceName ? "Connect" : "Find me"
+            }
             theme={theme}
             disabled={isBusy}
             onPress={deviceName ? onConnect : onFindMe}

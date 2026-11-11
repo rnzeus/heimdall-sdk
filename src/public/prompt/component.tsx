@@ -98,7 +98,7 @@ const HeimdallConnectPrompt = ({
         canCopy={canCopy}
         onCopyChannel={handleCopyChannel}
         onConnect={onConfirmConnect}
-        onBack={cloudUrl ? () => switchMode("cloud") : undefined}
+        onAuto={cloudUrl ? () => switchMode("cloud") : undefined}
         isConnecting={isConnecting}
         notice={notice}
       />

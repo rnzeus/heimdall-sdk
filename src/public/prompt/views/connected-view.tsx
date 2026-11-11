@@ -49,7 +49,7 @@ const ConnectedView = ({
     </View>
     <ScreenRecording theme={theme} />
     <Footer
-      secondary={
+      start={
         <ActionButton
           title="Close"
           variant="link"
