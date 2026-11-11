@@ -4,6 +4,7 @@ import type { JSX } from "react";
 import ActionButton from "../ui/action-button";
 import Footer from "../ui/footer";
 import ScreenRecording from "../ui/screen-recording";
+import StatusLine from "../ui/status-line";
 import Header from "../ui/header";
 import type { PromptTheme } from "../theme";
 import useCloudView from "./use-cloud-view";
@@ -15,6 +16,8 @@ type Props = {
   socketError: string | null;
   theme: PromptTheme;
   isConnecting: boolean;
+  /** a step the user takes while it connects, e.g. the iOS Local Network question */
+  notice: string | null;
   startConnecting: (connectFn: () => void) => void;
   onManual: () => void;
 };
@@ -25,6 +28,7 @@ const CloudView = ({
   socketError,
   theme,
   isConnecting,
+  notice,
   startConnecting,
   onManual,
 }: Props): JSX.Element => {
@@ -74,34 +78,34 @@ const CloudView = ({
           ? "Start Heimdall for this device on your Mac."
           : "Link this device with your Heimdall account."}
       </Text>
-      {error ? (
-        <Text style={[styles.error, { color: theme.danger }]}>{error}</Text>
-      ) : null}
+      <StatusLine error={error} notice={notice} theme={theme} />
       <ScreenRecording theme={theme} />
       <Footer
-        secondary={
-          <>
-            {deviceName ? (
-              <ActionButton
-                title="Unlink"
-                variant="link"
-                theme={theme}
-                disabled={isBusy}
-                onPress={onUnlink}
-              />
-            ) : null}
+        start={
+          <ActionButton
+            title="Enter manually"
+            variant="link"
+            theme={theme}
+            disabled={isBusy}
+            onPress={onManual}
+          />
+        }
+        end={
+          deviceName ? (
             <ActionButton
-              title="Enter manually"
-              variant="link"
+              title="Unlink"
+              variant="quiet"
               theme={theme}
               disabled={isBusy}
-              onPress={onManual}
+              onPress={onUnlink}
             />
-          </>
+          ) : null
         }
         primary={
           <ActionButton
-            title={isConnecting ? "Connecting…" : deviceName ? "Connect" : "Find me"}
+            title={
+              isConnecting ? "Connecting…" : deviceName ? "Connect" : "Find me"
+            }
             theme={theme}
             disabled={isBusy}
             onPress={deviceName ? onConnect : onFindMe}

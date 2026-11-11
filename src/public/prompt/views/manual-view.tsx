@@ -6,6 +6,7 @@ import { CopyButton } from "../../copy-button";
 import ActionButton from "../ui/action-button";
 import Footer from "../ui/footer";
 import ScreenRecording from "../ui/screen-recording";
+import StatusLine from "../ui/status-line";
 import Header from "../ui/header";
 import type { PromptTheme } from "../theme";
 import type { PromptUiState } from "../types";
@@ -19,8 +20,11 @@ type Props = {
   canCopy: boolean;
   onCopyChannel: () => void;
   onConnect: () => void;
-  onBack?: () => void;
+  /** back to finding the Mac through Heimdall cloud: the counterpart of “Enter manually” */
+  onAuto?: () => void;
   isConnecting: boolean;
+  /** a step the user takes while it connects, e.g. the iOS Local Network question */
+  notice: string | null;
 };
 
 const ManualView = ({
@@ -31,8 +35,9 @@ const ManualView = ({
   canCopy,
   onCopyChannel,
   onConnect,
-  onBack,
+  onAuto,
   isConnecting,
+  notice,
 }: Props): JSX.Element => {
   const error = isConnecting ? null : ui.errorMessage;
   const inputStyle = [
@@ -106,20 +111,18 @@ const ManualView = ({
         </>
       ) : null}
 
-      {error ? (
-        <Text style={[styles.error, { color: theme.danger }]}>{error}</Text>
-      ) : null}
+      <StatusLine error={error} notice={notice} theme={theme} />
 
       <ScreenRecording theme={theme} />
       <Footer
-        secondary={
-          onBack ? (
+        start={
+          onAuto ? (
             <ActionButton
-              title="Back"
+              title="Find automatically"
               variant="link"
               theme={theme}
               disabled={isConnecting}
-              onPress={onBack}
+              onPress={onAuto}
             />
           ) : null
         }

@@ -7,7 +7,8 @@ type Props = {
   title: string;
   onPress: () => void;
   theme: PromptTheme;
-  variant?: "primary" | "danger" | "link";
+  /** quiet: a link for a rarer action, in the muted colour */
+  variant?: "primary" | "danger" | "link" | "quiet";
   disabled?: boolean;
 };
 
@@ -18,13 +19,20 @@ const ActionButton = ({
   variant = "primary",
   disabled = false,
 }: Props): JSX.Element => {
-  const isLink = variant === "link";
+  const isLink = variant === "link" || variant === "quiet";
   const background = isLink
     ? "transparent"
     : variant === "danger"
       ? theme.danger
       : theme.primary;
-  const color = isLink ? theme.primary : theme.onPrimary;
+  const color =
+    variant === "link"
+      ? theme.link
+      : variant === "quiet"
+        ? theme.muted
+        : variant === "danger"
+          ? theme.card
+          : theme.onPrimary;
 
   return (
     <Pressable
@@ -43,7 +51,12 @@ const ActionButton = ({
 };
 
 const styles = StyleSheet.create({
-  button: { borderRadius: 8, paddingHorizontal: 14, paddingVertical: 9 },
+  button: {
+    alignItems: "center",
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+  },
   link: { paddingVertical: 9 },
   title: { fontSize: 14, fontWeight: "600" },
   dimmed: { opacity: 0.5 },
