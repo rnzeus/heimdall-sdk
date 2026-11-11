@@ -6,6 +6,7 @@ import { CopyButton } from "../../copy-button";
 import ActionButton from "../ui/action-button";
 import Footer from "../ui/footer";
 import ScreenRecording from "../ui/screen-recording";
+import StatusLine from "../ui/status-line";
 import Header from "../ui/header";
 import type { PromptTheme } from "../theme";
 import type { PromptUiState } from "../types";
@@ -21,6 +22,8 @@ type Props = {
   onConnect: () => void;
   onBack?: () => void;
   isConnecting: boolean;
+  /** a step the user takes while it connects, e.g. the iOS Local Network question */
+  notice: string | null;
 };
 
 const ManualView = ({
@@ -33,6 +36,7 @@ const ManualView = ({
   onConnect,
   onBack,
   isConnecting,
+  notice,
 }: Props): JSX.Element => {
   const error = isConnecting ? null : ui.errorMessage;
   const inputStyle = [
@@ -106,9 +110,7 @@ const ManualView = ({
         </>
       ) : null}
 
-      {error ? (
-        <Text style={[styles.error, { color: theme.danger }]}>{error}</Text>
-      ) : null}
+      <StatusLine error={error} notice={notice} theme={theme} />
 
       <ScreenRecording theme={theme} />
       <Footer

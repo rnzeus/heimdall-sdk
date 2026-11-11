@@ -27,7 +27,7 @@ const HeimdallConnectPrompt = ({
   onCopyToClipboard,
 }: Props): JSX.Element | null => {
   const [ui, setUi] = usePromptUi();
-  const { isConnecting, startConnecting } = useConnectAwaiter({
+  const { isConnecting, notice, startConnecting } = useConnectAwaiter({
     visible: ui.visible,
   });
   const { onCancel, onConfirmConnect, onConfirmDisconnect, handleCopyChannel } =
@@ -82,6 +82,7 @@ const HeimdallConnectPrompt = ({
           socketError={ui.errorMessage}
           theme={theme}
           isConnecting={isConnecting}
+          notice={notice}
           startConnecting={startConnecting}
           onManual={() => switchMode("manual")}
         />
@@ -99,6 +100,7 @@ const HeimdallConnectPrompt = ({
         onConnect={onConfirmConnect}
         onBack={cloudUrl ? () => switchMode("cloud") : undefined}
         isConnecting={isConnecting}
+        notice={notice}
       />
     );
   };
