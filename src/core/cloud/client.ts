@@ -59,12 +59,14 @@ async function request({
 
 export async function createClaim({
   baseUrl,
+  appKey,
   appId,
   platform,
   installId,
   device,
 }: {
   baseUrl: string;
+  appKey?: string;
   appId?: string;
   platform?: string;
   installId?: string;
@@ -74,7 +76,7 @@ export async function createClaim({
     baseUrl,
     path: "/claims",
     method: "POST",
-    body: { appId, platform, installId, device },
+    body: { appKey, appId, platform, installId, device },
   });
   if (status !== 201) throw new Error(`Cloud error ${status}`);
   return data as CloudClaim;

@@ -20,7 +20,7 @@ type Props = {
   canCopy: boolean;
   onCopyChannel: () => void;
   onConnect: () => void;
-  /** back to finding the Mac through Heimdall cloud: the counterpart of “Enter manually” */
+  /** back to finding the computer through Heimdall cloud: the counterpart of “Enter manually” */
   onAuto?: () => void;
   isConnecting: boolean;
   /** a step the user takes while it connects, e.g. the iOS Local Network question */

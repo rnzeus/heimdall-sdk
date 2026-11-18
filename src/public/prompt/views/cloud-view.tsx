@@ -75,7 +75,7 @@ const CloudView = ({
       />
       <Text style={[styles.text, { color: theme.muted }]}>
         {deviceName
-          ? "Start Heimdall for this device on your Mac."
+          ? "Start Heimdall for this device on your computer."
           : "Link this device with your Heimdall account."}
       </Text>
       <StatusLine error={error} notice={notice} theme={theme} />

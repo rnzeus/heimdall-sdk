@@ -30,6 +30,15 @@ export type HeimdallConnectOptions = {
    * `getUniqueId()` and `isEmulator()`; helps Heimdall cloud tell devices and simulators apart
    */
   device?: { id?: string; isEmulator?: boolean };
-  /** heimdall-cloud service: enables "Find me" device linking in the connect prompt */
-  cloud?: { url: string };
+  /**
+   * heimdall-cloud service: enables "Find me" device linking in the connect prompt.
+   * `appKey` — the app's public key from the team's Apps page: linked devices go to the team, and Heimdall
+   * applies the team's AI rules to this app. Not a secret.
+   */
+  cloud?: { url: string; appKey?: string };
+  /**
+   * What AI may get from this app's data in Heimdall, set by the app's developers: "strict" — the Strict data set,
+   * no screenshots; "off" — nothing. It can only make Heimdall stricter. Not set — Heimdall's own rules apply.
+   */
+  ai?: "strict" | "off";
 };

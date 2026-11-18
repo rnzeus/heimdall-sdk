@@ -16,6 +16,7 @@ const delay = (ms: number) =>
 
 export async function linkDevice({
   baseUrl,
+  appKey,
   appId,
   platform,
   installId,
@@ -23,6 +24,7 @@ export async function linkDevice({
   isCancelled,
 }: {
   baseUrl: string;
+  appKey?: string;
   appId?: string;
   platform?: string;
   installId?: string;
@@ -31,6 +33,7 @@ export async function linkDevice({
 }): Promise<LinkDeviceResult> {
   const claim = await createClaim({
     baseUrl,
+    appKey,
     appId,
     platform,
     installId,
