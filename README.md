@@ -184,7 +184,8 @@ disconnect();
 | `captureEarlyEvents` | `boolean` | `false` | buffer events that happen before the connection is up |
 | `keepAlive` | `boolean` | `false` | reconnect on app start: to the last channel, or through the cloud again if the last connection came from it |
 | `captureConsole` | `boolean` | `true` | console, uncaught errors, unhandled rejections |
-| `cloud` | `{ url: string }` | — | optional, see [Connecting without typing an address](#connecting-without-typing-an-address) |
+| `cloud` | `{ url: string; appKey?: string }` | — | optional, see [Connecting without typing an address](#connecting-without-typing-an-address) and [Team apps](#team-apps) |
+| `ai` | `"strict" \| "off"` | — | what AI may get from this app's data in Heimdall, see [Team apps](#team-apps) |
 
 `<HeimdallConnectPrompt />` accepts `onCopyToClipboard?: (text: string) => void` to plug in your clipboard library.
 
@@ -214,6 +215,24 @@ The cloud only stores accounts, devices and the current address of the desktop. 
 **One app at a time.** Through the cloud a desktop accepts one app at a time; another app gets a clear message and can connect once the first one disconnects. To inspect several devices at once, connect them manually.
 
 **Devices.** A device in the account is a phone, a tablet or a simulator; several apps (for example dev and stage builds) can be linked to it. Linking an Android app to an iPhone, or an emulator to a real device, asks for confirmation. Pass `device` (see [Options](#options)) to make the iOS simulator recognisable too.
+
+## Team apps
+
+A team in Heimdall Cloud registers its app on the team's **Apps** page and gets a public **app key** (`hk_…`). It is not a secret: it ties the app to the team, like a DSN.
+
+```ts
+configureConnectPrompt({
+  // ...
+  cloud: { url: "https://heimdall.rnzeus.dev", appKey: "hk_..." },
+  ai: "strict", // optional
+});
+```
+
+- **Find me** links the device straight into the team's devices; the tester doesn't pick a team.
+- Heimdall applies the team's AI rule for the app (Member's choice, Strict or Off) to bug reports with its events, through the cloud and in manual mode alike. Without a key Heimdall matches the app by `appId`.
+- `ai` is the app developers' own limit on what AI clients may get from the app's data in Heimdall: `"strict"` — the Strict data set, no screenshots; `"off"` — nothing. It can only make Heimdall stricter, never looser than the team's rule.
+
+Older Heimdall versions ignore both.
 
 ## Production safety
 

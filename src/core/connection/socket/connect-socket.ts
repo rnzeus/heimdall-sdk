@@ -11,6 +11,7 @@ import {
 import { handleSocketLost } from "./handle-socket-lost";
 import { flushEarlyEvents } from "./flush-early-events";
 import { normalizeSocketError } from "./normalize-socket-error";
+import { unreachableMessage } from "./unreachable-message";
 import { SOCKET } from "./constants";
 import { getCapabilities } from "./capabilities";
 import { handleHostLine } from "./host-message";
@@ -59,7 +60,9 @@ function buildHello({
   const device = readDeviceInfo();
   if (device) hello.device = device;
   const app = normaliseAppInfo(options.app);
-  if (app) hello.app = app;
+  const key = options.cloud?.appKey;
+  if (app || key) hello.app = { ...app, ...(key ? { key } : {}) };
+  if (options.ai) hello.policy = { ai: options.ai };
   if (secure) hello.auth = { token: secure.token };
   const capabilities = getCapabilities();
   if (capabilities) hello.capabilities = capabilities;
@@ -195,18 +198,24 @@ export function connectSocket(
         onPlainConnect
       );
 
+  const unreachable = (reason: string) =>
+    unreachableMessage({
+      host: options.host,
+      port: options.port,
+      source: session.source ?? "manual",
+      reason,
+    });
+
   const connectTimeout = setTimeout(() => {
     if (getSocket() !== newSocket || isConnected()) return;
-    setLastError(
-      `Can't reach Heimdall at ${options.host}:${options.port}. Same Wi-Fi?`
-    );
+    setLastError(unreachable("no answer"));
     handleSocketLost();
   }, SOCKET.CONNECT_TIMEOUT_MS);
 
   newSocket.on("error", (error: unknown) => {
     clearTimeout(connectTimeout);
     const message = normalizeSocketError(error);
-    setLastError(message);
+    setLastError(isConnected() ? message : unreachable(message));
     if (__DEV__) {
       console.warn("[Heimdall] socket error:", message);
     }

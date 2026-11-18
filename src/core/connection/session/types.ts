@@ -7,6 +7,8 @@ export type HeimdallSession = {
   createdAt: string;
   options: HeimdallConnectOptions;
   secure?: SecureTransport;
+  /** where the host address came from: shown when the host can't be reached */
+  source?: ConnectionSource;
 };
 
 export type ConnectionSource = "cloud" | "manual";

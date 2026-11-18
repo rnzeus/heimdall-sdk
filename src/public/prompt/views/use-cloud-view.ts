@@ -49,6 +49,7 @@ const useCloudView = ({
     try {
       const result = await linkDevice({
         baseUrl,
+        appKey: defaults?.cloud?.appKey,
         appId: defaults?.appId,
         platform: defaults?.platform,
         installId: getOrCreateClientId(),
